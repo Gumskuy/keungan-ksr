@@ -6,8 +6,8 @@
 // │  GANTI 2 NILAI INI DENGAN PUNYA KAMU         │
 // │  (dari Supabase → Settings → API)            │
 // └──────────────────────────────────────────────┘
-const SUPABASE_URL = 'GANTI_DENGAN_PROJECT_URL';
-const SUPABASE_ANON_KEY = 'GANTI_DENGAN_ANON_KEY';
+const SUPABASE_URL = 'https://wiwkfhqksbrxqhjnnght.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indpd2tmaHFrc2JyeHFoam5uZ2h0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzNzU1OTAsImV4cCI6MjEwODk1MTU5MH0.CYZ_BeJUdn8_dOArqazn4k6rLfHpBwBfbDKES0g2c2o';
 
 const TARIF_KAS = 5000;
 const TARIF_DENDA = 5000;
