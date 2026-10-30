@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Keuangan KSR — ASM Ariyanti</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<!-- ═══════════════ SIDEBAR ═══════════════ -->
+<nav id="sidebar" class="sidebar">
+  <div class="sidebar-header">
+    <img src="logo-ksr.jpg" alt="Logo KSR" class="sidebar-logo">
+    <h2>KSR Ariyanti</h2>
+    <small>Sistem Keuangan</small>
+  </div>
+  <ul class="nav-menu">
+    <li><a href="#" data-page="dashboard" class="nav-link active">📊 Dashboard</a></li>
+    <li><a href="#" data-page="anggota" class="nav-link">👥 Anggota</a></li>
+    <li class="admin-only"><a href="#" data-page="input-kas" class="nav-link">✅ Input Kas</a></li>
+    <li class="admin-only"><a href="#" data-page="pengeluaran" class="nav-link">💸 Pengeluaran</a></li>
+    <li><a href="#" data-page="cetak" class="nav-link">🖨️ Cetak LPJ</a></li>
+    <li class="admin-only"><a href="#" data-page="settings" class="nav-link">⚙️ Pengaturan</a></li>
+  </ul>
+  <div class="sidebar-footer">
+    <div id="auth-section">
+      <button id="btn-login" class="btn btn-login" onclick="showLogin()">🔐 Login Admin</button>
+      <div id="logged-in-info" style="display:none;">
+        <span id="logged-user" class="logged-user"></span>
+        <button class="btn btn-logout" onclick="doLogout()">Logout</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════ MAIN CONTENT ═══════════════ -->
+<main id="main-content" class="main-content">
+
+  <!-- HAMBURGER MOBILE -->
+  <button class="hamburger" onclick="toggleSidebar()">☰</button>
+
+  <!-- ─── LOGIN MODAL ─── -->
+  <div id="login-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <h2>🔐 Login Admin</h2>
+      <form onsubmit="doLogin(event)">
+        <input type="email" id="login-email" placeholder="Email admin" required>
+        <input type="password" id="login-password" placeholder="Password" required>
+        <button type="submit" class="btn btn-primary">Masuk</button>
+        <button type="button" class="btn btn-secondary" onclick="hideLogin()">Batal</button>
+      </form>
+      <p id="login-error" class="error-msg" style="display:none;"></p>
+    </div>
+  </div>
+
+  <!-- ─── PAGE: DASHBOARD ─── -->
+  <section id="page-dashboard" class="page active">
+    <h1>📊 Dashboard Keuangan</h1>
+    <div class="cards-grid">
+      <div class="card card-green">
+        <div class="card-label">Total Pemasukan</div>
+        <div class="card-value" id="total-pemasukan">Rp 0</div>
+      </div>
+      <div class="card card-red">
+        <div class="card-label">Total Pengeluaran</div>
+        <div class="card-value" id="total-pengeluaran">Rp 0</div>
+      </div>
+      <div class="card card-blue">
+        <div class="card-label">Saldo Kas</div>
+        <div class="card-value" id="saldo-kas">Rp 0</div>
+      </div>
+      <div class="card card-yellow">
+        <div class="card-label">Total Denda</div>
+        <div class="card-value" id="total-denda">Rp 0</div>
+      </div>
+    </div>
+
+    <!-- Tabel Pembayaran -->
+    <div class="table-section">
+      <div class="table-header">
+        <h2>Tabel Pembayaran Kas Anggota</h2>
+        <div class="pagination-controls">
+          <button class="btn btn-sm" id="btn-prev-page" onclick="prevPage()">← Sebelumnya</button>
+          <span id="page-info">Minggu 1 - 10</span>
+          <button class="btn btn-sm" id="btn-next-page" onclick="nextPage()">Selanjutnya →</button>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table id="tabel-pembayaran">
+          <thead id="thead-pembayaran"></thead>
+          <tbody id="tbody-pembayaran"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PAGE: ANGGOTA ─── -->
+  <section id="page-anggota" class="page">
+    <h1>👥 Data Anggota KSR</h1>
+    <div class="admin-only">
+      <form onsubmit="tambahAnggota(event)" class="inline-form">
+        <input type="text" id="input-nama-anggota" placeholder="Nama anggota baru..." required>
+        <button type="submit" class="btn btn-primary">+ Tambah</button>
+      </form>
+    </div>
+    <div class="search-box">
+      <input type="text" id="search-anggota" placeholder="🔍 Cari anggota..." oninput="filterAnggota()">
+    </div>
+    <table id="tabel-anggota" class="data-table">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Nama Anggota</th>
+          <th class="admin-only">Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-anggota"></tbody>
+    </table>
+  </section>
+
+  <!-- ─── PAGE: INPUT KAS ─── -->
+  <section id="page-input-kas" class="page admin-only">
+    <h1>✅ Input Pembayaran Kas</h1>
+    <p class="hint">Centang minggu yang sudah dibayar. Bisa pilih beberapa minggu sekaligus.</p>
+    <div class="input-kas-controls">
+      <label>Pilih Anggota:
+        <select id="select-anggota-kas"></select>
+      </label>
+    </div>
+    <div class="minggu-checkboxes" id="minggu-checkboxes"></div>
+    <button class="btn btn-primary" onclick="simpanKas()">💾 Simpan Pembayaran</button>
+    <p id="kas-status" class="status-msg"></p>
+  </section>
+
+  <!-- ─── PAGE: PENGELUARAN ─── -->
+  <section id="page-pengeluaran" class="page">
+    <h1>💸 Data Pengeluaran</h1>
+    <div class="admin-only">
+      <form onsubmit="tambahPengeluaran(event)" class="pengeluaran-form">
+        <input type="date" id="input-tgl-pengeluaran" required>
+        <input type="text" id="input-ket-pengeluaran" placeholder="Keterangan" required>
+        <input type="number" id="input-nominal-pengeluaran" placeholder="Nominal (Rp)" required min="0">
+        <button type="submit" class="btn btn-primary">+ Tambah</button>
+      </form>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Tanggal</th>
+          <th>Keterangan</th>
+          <th>Nominal</th>
+          <th class="admin-only">Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-pengeluaran"></tbody>
+    </table>
+  </section>
+
+  <!-- ─── PAGE: CETAK LPJ ─── -->
+  <section id="page-cetak" class="page">
+    <h1>🖨️ Cetak Laporan Pertanggungjawaban</h1>
+    <button class="btn btn-primary" onclick="cetakLPJ()">🖨️ Cetak / Print</button>
+    <div id="lpj-content" class="lpj-content">
+      <div class="lpj-header">
+        <img src="logo-ksr.jpg" alt="Logo KSR" class="lpj-logo">
+        <h2>LAPORAN PERTANGGUNGJAWABAN KEUANGAN</h2>
+        <h3>Korps Sukarela ASM Ariyanti</h3>
+        <p id="lpj-periode"></p>
+      </div>
+      <div id="lpj-body"></div>
+    </div>
+  </section>
+
+  <!-- ─── PAGE: SETTINGS ─── -->
+  <section id="page-settings" class="page admin-only">
+    <h1>⚙️ Pengaturan Akun</h1>
+    <form onsubmit="ubahPassword(event)" class="settings-form">
+      <label>Password Baru:
+        <input type="password" id="input-new-password" required minlength="6">
+      </label>
+      <label>Konfirmasi Password:
+        <input type="password" id="input-confirm-password" required minlength="6">
+      </label>
+      <button type="submit" class="btn btn-primary">💾 Ubah Password</button>
+    </form>
+    <p id="settings-status" class="status-msg"></p>
+  </section>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
