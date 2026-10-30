@@ -56,36 +56,58 @@ npm start
 node seed.js
 ```
 
-## Deploy ke Railway
+## Deploy ke Supabase + Render
 
-1. Push repo ke GitHub
-2. Buat project baru di [Railway](https://railway.app)
-3. **New** → **GitHub Repo** → pilih repo ini
-4. **New** → **Database** → **Add PostgreSQL**
-5. Buka **Variables** di service app, tambahkan:
-   - `DATABASE_URL` = `${{Postgres.DATABASE_URL}}`
-   - `SESSION_SECRET` = *(string acak panjang)*
-   - `ADMIN_USER` = `admin`
-   - `ADMIN_PASSWORD` = *(password aman)*
-   - `START_DATE` = `2026-08-24`
-   - `NODE_ENV` = `production`
-6. **Settings** → **Networking** → **Generate Domain**
-7. Tunggu deploy selesai
-8. Jalankan seed (opsional): di Railway shell, `node seed.js`
+### 1. Buat Database di Supabase
+
+1. Buka [supabase.com](https://supabase.com) → **Sign In** / **Sign Up**
+2. Klik **New Project**
+3. Isi:
+   - **Project name**: `Ksrkeuangan`
+   - **Database Password**: `KSrkeungan123`
+   - **Region**: Southeast Asia (Singapore)
+4. Tunggu project selesai dibuat
+5. Buka **Project Settings** → **Database** → salin **Connection string (URI)**
+6. Ganti `[YOUR-PASSWORD]` dengan `KSrkeungan123`
+
+### 2. Deploy Aplikasi ke Render.com
+
+1. Buka [render.com](https://render.com) → Sign Up pakai GitHub
+2. Klik **New** → **Web Service**
+3. Hubungkan repo GitHub `keunaganv2`
+4. Isi pengaturan:
+   - **Name**: `ksr-keuangan`
+   - **Runtime**: Docker
+   - **Plan**: Free
+5. Tambahkan **Environment Variables**:
+
+| Variable | Nilai |
+|----------|-------|
+| `DATABASE_URL` | *(Connection string dari Supabase)* |
+| `SESSION_SECRET` | `ksr-ariyanti-secret-2026` |
+| `ADMIN_USER` | `admin` |
+| `ADMIN_PASSWORD` | `KSrkeungan123` |
+| `START_DATE` | `2026-08-24` |
+| `NODE_ENV` | `production` |
+| `PORT` | `3000` |
+
+6. Klik **Create Web Service**, tunggu build selesai
+7. Buka URL yang diberikan Render (misal: `https://ksr-keuangan.onrender.com`)
+
+> **Catatan**: Tabel database dan data anggota akan otomatis dibuat saat pertama kali server berjalan.
 
 ## Palet Warna
 
 | Peran | Hex |
 |---|---|
-| Primary (Slate Dark) | `#1E293B` |
-| Accent (Sky Blue) | `#0284C7` |
-| Background | `#F8FAFC` |
+| Primary (KSR Red) | `#8B1A1A` |
+| Accent (Crimson) | `#DC143C` |
+| Background | `#FFF5F5` |
 | Card / Surface | `#FFFFFF` |
 | Border | `#E2E8F0` |
-| Teks Utama | `#0F172A` |
+| Teks Utama | `#1A1A2E` |
 | Teks Sekunder | `#64748B` |
 
 ## Lisensi
 
 Internal — Korps Sukarela ASM Ariyanti
-"# keunaganv2" 
