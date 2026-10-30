@@ -2,7 +2,7 @@
 <%- include('partials/head') %>
 
 <!-- Top Section / Header -->
-<div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4">
   <div>
     <div class="flex items-center gap-2 mb-2">
       <span class="px-3 py-1 rounded-full bg-primary-container text-on-primary text-xs font-semibold tracking-wider uppercase">Periode Aktif: 2026/2027</span>
@@ -18,6 +18,19 @@
     </a>
   </div>
 </div>
+
+<!-- Info Banner for Public Mode -->
+<% if (!isAdmin) { %>
+  <div class="mb-6 p-4 rounded-2xl bg-secondary/10 border border-secondary/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-primary shadow-sm">
+    <div class="flex items-center gap-2.5">
+      <span class="material-symbols-outlined text-secondary text-[22px]">info</span>
+      <span><strong>Mode Lihat Saja (Publik):</strong> Anda dapat memantau data iuran kas anggota secara transparan. Kotak centang dikunci dan hanya dapat diedit oleh Administrator.</span>
+    </div>
+    <a href="/login" class="px-3.5 py-1.5 rounded-xl bg-primary-container text-white font-semibold hover:bg-primary transition-all whitespace-nowrap shadow-sm flex items-center gap-1.5">
+      <span class="material-symbols-outlined text-[16px]">key</span> Masuk Admin
+    </a>
+  </div>
+<% } %>
 
 <!-- 4 Summary Cards (Stitch Design with subtle blur glow) -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -92,7 +105,13 @@
   <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
     <div>
       <h2 class="text-lg font-bold text-primary">Tabel Pembayaran Uang Kas Anggota KSR</h2>
-      <p class="text-xs text-on-surface-variant">Klik kotak centang di tabel untuk mengubah status pembayaran secara langsung tanpa reload.</p>
+      <p class="text-xs text-on-surface-variant">
+        <% if (isAdmin) { %>
+          Klik kotak centang di tabel untuk mengubah status pembayaran secara langsung tanpa reload.
+        <% } else { %>
+          Daftar rekapitulasi iuran kas dan denda kedisiplinan 52 minggu.
+        <% } %>
+      </p>
     </div>
     <div class="flex items-center gap-3 w-full sm:w-auto">
       <div class="relative w-full sm:w-72">
@@ -128,7 +147,6 @@
       </thead>
       <tbody class="divide-y divide-surface-container">
         <% anggota.forEach(function(a, idx) { 
-          // Ambil inisial nama
           const parts = a.nama.trim().split(' ');
           const initial = (parts[0][0] + (parts.length > 1 ? parts[1][0] : '')).toUpperCase();
         %>
@@ -153,23 +171,25 @@
               <td class="py-2.5 px-2 text-center whitespace-nowrap border-r border-surface-container/40">
                 <div class="inline-flex items-center gap-1">
                   <!-- Checkbox Bayar (💰) -->
-                  <label class="cursor-pointer" title="Sudah Bayar Kas (Rp <%= TARIF_KAS.toLocaleString('id-ID') %>)">
+                  <label class="<%= isAdmin ? 'cursor-pointer' : 'cursor-default' %>" title="<%= isAdmin ? (bayar ? 'Klik untuk membatalkan bayar' : 'Klik untuk menandai sudah bayar') : (bayar ? 'Sudah Bayar Kas' : 'Belum Bayar') %>">
                     <input type="checkbox" class="sr-only peer"
                       data-anggota="<%= a.id %>" data-tanggal="<%= w.dateStr %>"
                       <%= bayar ? 'checked' : '' %>
+                      <%= !isAdmin ? 'disabled' : '' %>
                       onchange="toggleKas(this, 'apakah_bayar')">
-                    <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg border border-surface-container-highest text-xs bg-surface-container-low/50 peer-checked:bg-emerald-100 peer-checked:border-emerald-400 peer-checked:text-emerald-700 opacity-60 peer-checked:opacity-100 hover:opacity-100 transition-all">
+                    <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg border border-surface-container-highest text-xs bg-surface-container-low/50 peer-checked:bg-emerald-100 peer-checked:border-emerald-400 peer-checked:text-emerald-700 opacity-60 peer-checked:opacity-100 <%= isAdmin ? 'hover:opacity-100' : '' %> transition-all">
                       💰
                     </span>
                   </label>
 
                   <!-- Checkbox Denda (⚠️) -->
-                  <label class="cursor-pointer" title="Kena Denda Keterlambatan (Rp <%= TARIF_DENDA.toLocaleString('id-ID') %>)">
+                  <label class="<%= isAdmin ? 'cursor-pointer' : 'cursor-default' %>" title="<%= isAdmin ? (denda ? 'Klik untuk membatalkan denda' : 'Klik untuk mengenakan denda') : (denda ? 'Kena Denda Keterlambatan' : 'Bebas Denda') %>">
                     <input type="checkbox" class="sr-only peer"
                       data-anggota="<%= a.id %>" data-tanggal="<%= w.dateStr %>"
                       <%= denda ? 'checked' : '' %>
+                      <%= !isAdmin ? 'disabled' : '' %>
                       onchange="toggleKas(this, 'kena_denda')">
-                    <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg border border-surface-container-highest text-xs bg-surface-container-low/50 peer-checked:bg-amber-100 peer-checked:border-amber-400 peer-checked:text-amber-700 opacity-40 peer-checked:opacity-100 hover:opacity-100 transition-all">
+                    <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg border border-surface-container-highest text-xs bg-surface-container-low/50 peer-checked:bg-amber-100 peer-checked:border-amber-400 peer-checked:text-amber-700 opacity-40 peer-checked:opacity-100 <%= isAdmin ? 'hover:opacity-100' : '' %> transition-all">
                       ⚠️
                     </span>
                   </label>
@@ -184,11 +204,19 @@
 </div>
 
 <script>
+const IS_ADMIN = <%= isAdmin ? 'true' : 'false' %>;
+
 function formatRp(n) {
   return 'Rp ' + (n||0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 
 function toggleKas(el, field) {
+  if (!IS_ADMIN) {
+    alert('Hanya Administrator yang memiliki akses untuk mengubah data kas.');
+    el.checked = !el.checked;
+    return;
+  }
+
   const aid = el.dataset.anggota;
   const tgl = el.dataset.tanggal;
   const val = el.checked;
@@ -198,7 +226,10 @@ function toggleKas(el, field) {
     headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': '<%= csrfToken %>' },
     body: JSON.stringify({ anggota_id: parseInt(aid), tanggal_periode: tgl, field: field, value: val })
   })
-  .then(r => r.json())
+  .then(r => {
+    if (!r.ok) throw new Error('Unauthorized');
+    return r.json();
+  })
   .then(d => {
     if (d.ok) {
       document.getElementById('val-kas').textContent = formatRp(d.totalKas);
@@ -207,7 +238,8 @@ function toggleKas(el, field) {
       document.getElementById('val-saldo').textContent = formatRp(d.sisaSaldo);
     }
   })
-  .catch(() => {
+  .catch((e) => {
+    alert('Gagal memperbarui data. Pastikan Anda sudah masuk sebagai admin.');
     el.checked = !el.checked;
   });
 }

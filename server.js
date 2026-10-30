@@ -75,9 +75,10 @@ app.use((req, res, next) => {
 
 /* ── View locals ───────────────────────────────────────── */
 app.use((req, res, next) => {
-  res.locals.user       = req.session.user || null;
+  res.locals.user        = req.session.user || null;
+  res.locals.isAdmin     = Boolean(req.session && req.session.user);
   res.locals.currentPath = req.path;
-  res.locals.TARIF_KAS  = TARIF_KAS;
+  res.locals.TARIF_KAS   = TARIF_KAS;
   res.locals.TARIF_DENDA = TARIF_DENDA;
   res.locals.formatRupiah = (n) => {
     return 'Rp ' + (n || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');

@@ -3,7 +3,7 @@ const router = express.Router();
 const pool = require('../db');
 const { requireLogin } = require('../middleware/auth');
 
-router.get('/anggota', requireLogin, async (req, res) => {
+router.get('/anggota', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM anggota ORDER BY nama ASC');
     res.render('anggota', {

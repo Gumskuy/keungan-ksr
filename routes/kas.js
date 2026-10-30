@@ -89,7 +89,7 @@ router.post('/kas/toggle', requireLogin, async (req, res) => {
 });
 
 /* Cetak LPJ */
-router.get('/kas/cetak-lpj', requireLogin, async (req, res) => {
+router.get('/kas/cetak-lpj', async (req, res) => {
   try {
     const kasRes   = await pool.query('SELECT COUNT(*)::int AS cnt FROM pembayaran_kas WHERE apakah_bayar = true');
     const dendaRes = await pool.query('SELECT COUNT(*)::int AS cnt FROM pembayaran_kas WHERE kena_denda = true');

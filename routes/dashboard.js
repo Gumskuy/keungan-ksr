@@ -20,7 +20,7 @@ function generateWeeks() {
   return weeks;
 }
 
-router.get('/', requireLogin, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const weeks = generateWeeks();
     const anggotaResult  = await pool.query('SELECT * FROM anggota ORDER BY nama ASC');
