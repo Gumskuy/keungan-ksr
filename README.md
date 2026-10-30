@@ -88,3 +88,4 @@ node seed.js
 ## Lisensi
 
 Internal — Korps Sukarela ASM Ariyanti
+"# keunaganv2" 
