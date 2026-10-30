@@ -6,6 +6,7 @@ const crypto = require('crypto');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const pool = require('./db');
+const { startWeeklyBackupSchedule } = require('./backup');
 
 const app = express();
 
@@ -34,8 +35,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 /* ── Session ───────────────────────────────────────────── */
-app.use(session({
-  store: new PgSession({ pool, createTableIfMissing: true }),
+const sessionConfig = {
   secret: process.env.SESSION_SECRET || 'ksr-secret-change-me',
   resave: false,
   saveUninitialized: false,
@@ -45,7 +45,13 @@ app.use(session({
     httpOnly: true,
     sameSite: 'lax',
   },
-}));
+};
+
+if (process.env.DATABASE_URL) {
+  sessionConfig.store = new PgSession({ pool, createTableIfMissing: true });
+}
+
+app.use(session(sessionConfig));
 
 /* ── CSRF token generation ─────────────────────────────── */
 app.use((req, res, next) => {
@@ -131,9 +137,26 @@ async function init() {
     console.log(`Admin user "${u}" created.`);
   }
 
+  /* Default anggota jika kosong */
+  const anggotaCnt = await pool.query('SELECT COUNT(*)::int AS cnt FROM anggota');
+  if (anggotaCnt.rows[0].cnt === 0) {
+    const defaultMembers = [
+      'Adelya Putri Ramadhani', 'Andien Amalia Pratiwi', 'Ardi Awaludin', 'Artika Citra Lestari',
+      'Asep', 'Davina Noviandini', 'Farid Febrian', 'Nurul Wahidah', 'Ramdan Dwi Nugroho',
+      'Regina Puspita', 'Reva Noviara', 'Reyhan Avisa Rizvan', 'Ririn Cantika', 'Rizki Pratama Putra',
+      'Sapira Rizki Fauziyah', 'Sapta Rosadi Permana', 'Seni Cahyani', 'Siti Lesya Alfiyani',
+      'Teuku Reyki Septiansyah', 'Yulinda Anggraeni', 'Yusup Muhammad Ramdan'
+    ];
+    for (const m of defaultMembers) {
+      await pool.query('INSERT INTO anggota (nama) VALUES ($1) ON CONFLICT DO NOTHING', [m]);
+    }
+    console.log(`${defaultMembers.length} data anggota awal berhasil dimuat.`);
+  }
+
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server berjalan di port ${PORT}`);
+    console.log(`Server berjalan di http://localhost:${PORT}`);
+    startWeeklyBackupSchedule();
   });
 }
 

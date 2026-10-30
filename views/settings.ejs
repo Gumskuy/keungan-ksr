@@ -1,7 +1,7 @@
-<% const pageTitle = 'Pengaturan Akun' %>
+<% const pageTitle = 'Pengaturan' %>
 <%- include('partials/head') %>
 
-<h1 class="page-title">Pengaturan Akun</h1>
+<h1 class="page-title">Pengaturan Akun & Sistem</h1>
 
 <% if (success) { %>
   <div class="alert alert-success"><%= success %></div>
@@ -10,7 +10,9 @@
   <div class="alert alert-error"><%= error %></div>
 <% } %>
 
-<div class="card form-card">
+<!-- Pengaturan Akun -->
+<div class="card form-card" style="margin-bottom: 2rem;">
+  <h2 class="card-title">Ganti Username & Password</h2>
   <form method="POST" action="/settings">
     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
@@ -37,8 +39,39 @@
       <input type="password" id="password_konfirmasi" name="password_konfirmasi" placeholder="Ulangi password baru">
     </div>
 
-    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+    <button type="submit" class="btn btn-primary">Simpan Perubahan Akun</button>
   </form>
+</div>
+
+<!-- Auto Backup Database -->
+<div class="card form-card">
+  <h2 class="card-title">Backup Database Mingguan</h2>
+  <p class="text-secondary" style="margin-bottom: 1rem;">
+    Sistem secara otomatis membuat salinan cadangan (backup) database ke direktori lokal setiap <strong>7 hari sekali</strong>. Riwayat backup disimpan selama 8 minggu terakhir.
+  </p>
+
+  <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+    <form method="POST" action="/settings/backup/create" style="display: inline;">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button type="submit" class="btn btn-primary btn-sm">📦 Buat Backup Sekarang</button>
+    </form>
+    <a href="/settings/backup/download/json" class="btn btn-secondary btn-sm" download>⬇ Unduh Backup (JSON)</a>
+    <a href="/settings/backup/download/sql" class="btn btn-secondary btn-sm" download>⬇ Unduh Script SQL Restore</a>
+  </div>
+
+  <% if (backups && backups.length > 0) { %>
+    <h3 style="font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem;">File Backup Terakhir di Server:</h3>
+    <ul style="list-style: none; padding: 0; font-size: 0.85rem;">
+      <% backups.forEach(function(b) { %>
+        <li style="padding: 0.4rem 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;">
+          <span>📄 <code><%= b.filename %></code> (<%= b.sizeKb %> KB)</span>
+          <span class="text-secondary"><%= b.createdAt %></span>
+        </li>
+      <% }) %>
+    </ul>
+  <% } else { %>
+    <p class="text-secondary" style="font-style: italic;">Belum ada file backup di server. Klik "Buat Backup Sekarang" untuk membuat salinan pertama.</p>
+  <% } %>
 </div>
 
 <%- include('partials/foot') %>
