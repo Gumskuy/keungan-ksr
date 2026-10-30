@@ -139,16 +139,18 @@
         <!-- Status Pembayaran & Denda -->
         <div class="p-4 rounded-xl bg-surface-container-low/60 border border-surface-container space-y-3">
           <label class="flex items-center gap-3 cursor-pointer">
-            <input type="checkbox" name="apakah_bayar" checked class="w-4 h-4 rounded text-secondary focus:ring-secondary accent-secondary">
+            <input type="checkbox" name="apakah_bayar" checked class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-600 accent-emerald-600">
             <span class="text-xs font-semibold text-primary flex items-center gap-1.5">
-              <span>💰</span> Tandai Sudah Bayar Kas (Rp <%= TARIF_KAS.toLocaleString('id-ID') %> per minggu)
+              <span class="w-4 h-4 rounded bg-emerald-600 text-white inline-flex items-center justify-center"><svg class="w-2.5 h-2.5 fill-none stroke-current stroke-[2.5]" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>
+              Tandai Sudah Bayar Kas (Rp <%= TARIF_KAS.toLocaleString('id-ID') %> per minggu)
             </span>
           </label>
 
           <label class="flex items-center gap-3 cursor-pointer">
-            <input type="checkbox" name="kena_denda" class="w-4 h-4 rounded text-error focus:ring-error accent-error">
-            <span class="text-xs font-semibold text-error flex items-center gap-1.5">
-              <span>⚠️</span> Tandai Kena Denda Keterlambatan (Rp <%= TARIF_DENDA.toLocaleString('id-ID') %> per minggu)
+            <input type="checkbox" name="kena_denda" class="w-4 h-4 rounded text-amber-500 focus:ring-amber-500 accent-amber-500">
+            <span class="text-xs font-semibold text-amber-800 flex items-center gap-1.5">
+              <span class="w-4 h-4 rounded bg-amber-500 text-white inline-flex items-center justify-center font-bold text-[10px]">!</span>
+              Tandai Kena Denda Keterlambatan (Rp <%= TARIF_DENDA.toLocaleString('id-ID') %> per minggu)
             </span>
           </label>
         </div>

@@ -119,11 +119,11 @@
         <input type="text" id="memberSearch" oninput="filterTable()" placeholder="Cari nama anggota..." class="w-full pl-9 pr-4 py-2 bg-surface-container-low rounded-xl text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary transition-all">
       </div>
       <div class="hidden sm:flex items-center gap-2">
-        <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant px-2.5 py-1.5 bg-surface-container-low rounded-lg">
-          <span>💰</span> Bayar
+        <span class="inline-flex items-center gap-1.5 text-xs text-on-surface-variant px-2.5 py-1.5 bg-surface-container-low rounded-lg font-medium">
+          <span class="w-4 h-4 rounded bg-emerald-600 text-white inline-flex items-center justify-center"><svg class="w-2.5 h-2.5 fill-none stroke-current stroke-[2.5]" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span> Sudah Bayar
         </span>
-        <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant px-2.5 py-1.5 bg-surface-container-low rounded-lg">
-          <span>⚠️</span> Denda
+        <span class="inline-flex items-center gap-1.5 text-xs text-on-surface-variant px-2.5 py-1.5 bg-surface-container-low rounded-lg font-medium">
+          <span class="w-4 h-4 rounded bg-amber-500 text-white inline-flex items-center justify-center font-bold text-[10px]">!</span> Kena Denda
         </span>
       </div>
     </div>
@@ -202,27 +202,27 @@
             %>
               <td class="py-2.5 px-2 text-center whitespace-nowrap border-r border-surface-container/40 week-col week-batch-<%= batchIdx %>">
                 <div class="inline-flex items-center gap-1">
-                  <!-- Checkbox Bayar (💰) -->
+                  <!-- Checkbox Bayar (Ceklis ✓) -->
                   <label class="<%= isAdmin ? 'cursor-pointer' : 'cursor-default' %>" title="<%= isAdmin ? (bayar ? 'Klik untuk membatalkan bayar' : 'Klik untuk menandai sudah bayar') : (bayar ? 'Sudah Bayar Kas' : 'Belum Bayar') %>">
                     <input type="checkbox" class="sr-only peer"
                       data-anggota="<%= a.id %>" data-tanggal="<%= w.dateStr %>"
                       <%= bayar ? 'checked' : '' %>
                       <%= !isAdmin ? 'disabled' : '' %>
                       onchange="toggleKas(this, 'apakah_bayar')">
-                    <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg border border-surface-container-highest text-xs bg-surface-container-low/50 peer-checked:bg-emerald-100 peer-checked:border-emerald-400 peer-checked:text-emerald-700 opacity-60 peer-checked:opacity-100 <%= isAdmin ? 'hover:opacity-100' : '' %> transition-all">
-                      💰
+                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-md border border-surface-container-highest bg-white peer-checked:bg-emerald-600 peer-checked:border-emerald-600 text-transparent peer-checked:text-white transition-all shadow-xs <%= isAdmin ? 'hover:border-emerald-500' : '' %>">
+                      <svg class="w-3.5 h-3.5 fill-none stroke-current stroke-[2.5]" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                     </span>
                   </label>
 
-                  <!-- Checkbox Denda (⚠️) -->
+                  <!-- Checkbox Denda (Tanda !) -->
                   <label class="<%= isAdmin ? 'cursor-pointer' : 'cursor-default' %>" title="<%= isAdmin ? (denda ? 'Klik untuk membatalkan denda' : 'Klik untuk mengenakan denda') : (denda ? 'Kena Denda Keterlambatan' : 'Bebas Denda') %>">
                     <input type="checkbox" class="sr-only peer"
                       data-anggota="<%= a.id %>" data-tanggal="<%= w.dateStr %>"
                       <%= denda ? 'checked' : '' %>
                       <%= !isAdmin ? 'disabled' : '' %>
                       onchange="toggleKas(this, 'kena_denda')">
-                    <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg border border-surface-container-highest text-xs bg-surface-container-low/50 peer-checked:bg-amber-100 peer-checked:border-amber-400 peer-checked:text-amber-700 opacity-40 peer-checked:opacity-100 <%= isAdmin ? 'hover:opacity-100' : '' %> transition-all">
-                      ⚠️
+                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-md border border-surface-container-highest bg-white peer-checked:bg-amber-500 peer-checked:border-amber-500 text-transparent peer-checked:text-white transition-all shadow-xs <%= isAdmin ? 'hover:border-amber-400' : '' %>">
+                      <span class="font-bold text-[11px] leading-none">!</span>
                     </span>
                   </label>
                 </div>
