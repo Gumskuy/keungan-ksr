@@ -1,0 +1,76 @@
+<% const pageTitle = 'Catat Pengeluaran' %>
+<%- include('partials/head') %>
+
+<h1 class="page-title">Catat Pengeluaran</h1>
+
+<% if (success) { %>
+  <div class="alert alert-success"><%= success %></div>
+<% } %>
+<% if (error) { %>
+  <div class="alert alert-error"><%= error %></div>
+<% } %>
+
+<div class="card form-card">
+  <h2 class="card-title">Tambah Pengeluaran</h2>
+  <form method="POST" action="/pengeluaran">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+    <div class="form-group">
+      <label for="tanggal_pengeluaran">Tanggal</label>
+      <input type="date" id="tanggal_pengeluaran" name="tanggal_pengeluaran" required>
+    </div>
+
+    <div class="form-group">
+      <label for="keterangan">Keterangan</label>
+      <input type="text" id="keterangan" name="keterangan" placeholder="Contoh: Beli ATK rapat">
+    </div>
+
+    <div class="form-group">
+      <label for="nominal">Nominal (Rp)</label>
+      <input type="number" id="nominal" name="nominal" min="1" required placeholder="50000">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Simpan</button>
+  </form>
+</div>
+
+<!-- Riwayat -->
+<h2 class="section-title">Riwayat Pengeluaran</h2>
+
+<% if (pengeluaran.length === 0) { %>
+  <p class="text-secondary">Belum ada data pengeluaran.</p>
+<% } else { %>
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Tanggal</th>
+          <th>Keterangan</th>
+          <th>Nominal</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% pengeluaran.forEach(function(p) { 
+          const tgl = p.tanggal_pengeluaran;
+          const d = tgl.getDate() + '/' + (tgl.getMonth()+1) + '/' + tgl.getFullYear();
+        %>
+          <tr>
+            <td><%= d %></td>
+            <td><%= p.keterangan %></td>
+            <td><%= formatRupiah(p.nominal) %></td>
+            <td>
+              <form method="POST" action="/pengeluaran/hapus/<%= p.id %>" style="display:inline"
+                onsubmit="return confirm('Yakin hapus pengeluaran ini?')">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+<% } %>
+
+<%- include('partials/foot') %>

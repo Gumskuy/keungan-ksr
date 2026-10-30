@@ -1,0 +1,75 @@
+<% const pageTitle = 'Daftar Anggota' %>
+<%- include('partials/head') %>
+
+<h1 class="page-title">Daftar Anggota KSR</h1>
+
+<% if (success) { %>
+  <div class="alert alert-success"><%= success %></div>
+<% } %>
+<% if (error) { %>
+  <div class="alert alert-error"><%= error %></div>
+<% } %>
+
+<!-- Add member form -->
+<div class="card form-card">
+  <h2 class="card-title">Tambah Anggota Baru</h2>
+  <form method="POST" action="/anggota" class="inline-form">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <input type="text" name="nama" placeholder="Nama lengkap anggota" required class="input-flex">
+    <button type="submit" class="btn btn-primary">Tambah</button>
+  </form>
+</div>
+
+<!-- Search -->
+<div class="search-box" style="margin-bottom:1rem">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  <input type="text" id="searchAnggota" placeholder="Cari nama anggota..." oninput="filterAnggota()">
+</div>
+
+<!-- Members table -->
+<div class="table-wrapper">
+  <table class="data-table" id="anggotaTable">
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>Nama Anggota</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% anggota.forEach(function(a, i) { %>
+        <tr data-nama="<%= a.nama.toLowerCase() %>">
+          <td><%= i + 1 %></td>
+          <td><%= a.nama %></td>
+          <td>
+            <form method="POST" action="/anggota/hapus/<%= a.id %>" style="display:inline"
+              onsubmit="return confirm('Yakin ingin menghapus <%= a.nama %>? Semua data pembayaran anggota ini akan ikut terhapus.')">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<p class="text-secondary">Total: <%= anggota.length %> anggota</p>
+
+<script>
+function filterAnggota() {
+  var q = document.getElementById('searchAnggota').value.toLowerCase();
+  var rows = document.querySelectorAll('#anggotaTable tbody tr');
+  var no = 1;
+  rows.forEach(function(tr) {
+    if (tr.dataset.nama.includes(q)) {
+      tr.style.display = '';
+      tr.children[0].textContent = no++;
+    } else {
+      tr.style.display = 'none';
+    }
+  });
+}
+</script>
+
+<%- include('partials/foot') %>

@@ -1,0 +1,52 @@
+<% const pageTitle = 'Input Uang Kas' %>
+<%- include('partials/head') %>
+
+<h1 class="page-title">Input Pembayaran Uang Kas</h1>
+
+<% if (success) { %>
+  <div class="alert alert-success">Data pembayaran berhasil disimpan!</div>
+<% } %>
+
+<div class="card form-card">
+  <form method="POST" action="/kas-masuk">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+    <div class="form-group">
+      <label for="anggota_id">Pilih Anggota</label>
+      <select id="anggota_id" name="anggota_id" required>
+        <option value="">— Pilih anggota —</option>
+        <% anggota.forEach(function(a) { %>
+          <option value="<%= a.id %>"><%= a.nama %></option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="tanggal_periode">Pilih Minggu</label>
+      <select id="tanggal_periode" name="tanggal_periode" required>
+        <option value="">— Pilih minggu —</option>
+        <% weeks.forEach(function(w) { %>
+          <option value="<%= w.dateStr %>">Minggu <%= w.number %> (<%= formatTgl(w.from) %> - <%= formatTgl(w.to) %> <%= w.to.getFullYear() %>)</option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="checkbox-label">
+        <input type="checkbox" name="apakah_bayar">
+        Sudah Bayar (Rp <%= TARIF_KAS.toLocaleString('id-ID') %>)
+      </label>
+    </div>
+
+    <div class="form-group">
+      <label class="checkbox-label">
+        <input type="checkbox" name="kena_denda">
+        Kena Denda (Rp <%= TARIF_DENDA.toLocaleString('id-ID') %>)
+      </label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Simpan</button>
+  </form>
+</div>
+
+<%- include('partials/foot') %>

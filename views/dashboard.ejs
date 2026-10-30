@@ -1,0 +1,118 @@
+<% const pageTitle = 'Dashboard Ringkas' %>
+<%- include('partials/head') %>
+
+<h1 class="page-title">Data Keuangan Korps Sukarela ASM Ariyanti</h1>
+
+<!-- Summary Cards -->
+<div class="summary-cards">
+  <div class="card" id="card-kas">
+    <div class="card-label">Total Kas Masuk</div>
+    <div class="card-value" id="val-kas"><%= formatRupiah(totalKas) %></div>
+    <div class="card-sub">Tarif <%= formatRupiah(TARIF_KAS) %>/minggu</div>
+  </div>
+  <div class="card" id="card-denda">
+    <div class="card-label">Total Denda Masuk</div>
+    <div class="card-value" id="val-denda"><%= formatRupiah(totalDenda) %></div>
+    <div class="card-sub">Denda <%= formatRupiah(TARIF_DENDA) %>/minggu</div>
+  </div>
+  <div class="card" id="card-pengeluaran">
+    <div class="card-label">Total Pengeluaran</div>
+    <div class="card-value" id="val-pengeluaran"><%= formatRupiah(totalPengeluaran) %></div>
+  </div>
+  <div class="card card-highlight" id="card-saldo">
+    <div class="card-label">Sisa Saldo Kas Bersih</div>
+    <div class="card-value" id="val-saldo"><%= formatRupiah(sisaSaldo) %></div>
+  </div>
+</div>
+
+<!-- Toolbar -->
+<div class="toolbar">
+  <div class="search-box">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="searchAnggota" placeholder="Cari nama anggota..." oninput="filterTable()">
+  </div>
+  <a href="/kas/cetak-lpj" target="_blank" class="btn btn-secondary">Cetak Laporan LPJ</a>
+</div>
+
+<!-- Payment Table -->
+<div class="table-wrapper">
+  <table class="payment-table" id="paymentTable">
+    <thead>
+      <tr>
+        <th class="sticky-col">Nama Anggota</th>
+        <% weeks.forEach(function(w) { %>
+          <th>
+            Minggu <%= w.number %><br>
+            <small><%= w.from.getDate() %>/<%= w.from.getMonth()+1 %> - <%= w.to.getDate() %>/<%= w.to.getMonth()+1 %></small>
+          </th>
+        <% }) %>
+      </tr>
+    </thead>
+    <tbody>
+      <% anggota.forEach(function(a) { %>
+        <tr data-nama="<%= a.nama.toLowerCase() %>">
+          <td class="sticky-col"><%= a.nama %></td>
+          <% weeks.forEach(function(w) { 
+            const key = a.id + '_' + w.dateStr;
+            const p = payments[key];
+            const bayar = p ? p.apakah_bayar : false;
+            const denda = p ? p.kena_denda : false;
+          %>
+            <td class="cell-check">
+              <label class="cb-label" title="Sudah Bayar">
+                <input type="checkbox" class="cb-bayar"
+                  data-anggota="<%= a.id %>" data-tanggal="<%= w.dateStr %>"
+                  <%= bayar ? 'checked' : '' %>
+                  onchange="toggleKas(this, 'apakah_bayar')">
+                <span class="cb-icon">💰</span>
+              </label>
+              <label class="cb-label" title="Kena Denda">
+                <input type="checkbox" class="cb-denda"
+                  data-anggota="<%= a.id %>" data-tanggal="<%= w.dateStr %>"
+                  <%= denda ? 'checked' : '' %>
+                  onchange="toggleKas(this, 'kena_denda')">
+                <span class="cb-icon">⚠️</span>
+              </label>
+            </td>
+          <% }) %>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<script>
+function formatRp(n) {
+  return 'Rp ' + (n||0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+function toggleKas(el, field) {
+  const aid = el.dataset.anggota;
+  const tgl = el.dataset.tanggal;
+  const val = el.checked;
+  fetch('/kas/toggle', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': '<%= csrfToken %>' },
+    body: JSON.stringify({ anggota_id: parseInt(aid), tanggal_periode: tgl, field: field, value: val })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.ok) {
+      document.getElementById('val-kas').textContent = formatRp(d.totalKas);
+      document.getElementById('val-denda').textContent = formatRp(d.totalDenda);
+      document.getElementById('val-pengeluaran').textContent = formatRp(d.totalPengeluaran);
+      document.getElementById('val-saldo').textContent = formatRp(d.sisaSaldo);
+    }
+  })
+  .catch(() => { el.checked = !el.checked; });
+}
+
+function filterTable() {
+  const q = document.getElementById('searchAnggota').value.toLowerCase();
+  document.querySelectorAll('#paymentTable tbody tr').forEach(function(tr) {
+    tr.style.display = tr.dataset.nama.includes(q) ? '' : 'none';
+  });
+}
+</script>
+
+<%- include('partials/foot') %>

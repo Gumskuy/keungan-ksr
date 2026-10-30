@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cetak LPJ — Keuangan KSR</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body class="print-page">
+  <div class="print-container">
+    <div class="print-header">
+      <h1>DATA KEUANGAN KORPS SUKARELA ASM ARIYANTI</h1>
+      <h2>Laporan Pertanggungjawaban (LPJ)</h2>
+      <p class="print-date">Dicetak: <%= new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %></p>
+    </div>
+
+    <hr>
+
+    <!-- Ringkasan -->
+    <h3>Ringkasan Keuangan</h3>
+    <table class="print-summary">
+      <tr><td>Total Kas Masuk</td><td class="text-right"><%= formatRupiah(totalKas) %></td></tr>
+      <tr><td>Total Denda Masuk</td><td class="text-right"><%= formatRupiah(totalDenda) %></td></tr>
+      <tr><td>Total Pengeluaran</td><td class="text-right"><%= formatRupiah(totalPengeluaran) %></td></tr>
+      <tr class="row-total"><td><strong>Sisa Saldo Kas Bersih</strong></td><td class="text-right"><strong><%= formatRupiah(sisaSaldo) %></strong></td></tr>
+    </table>
+
+    <!-- Daftar Pengeluaran -->
+    <h3>Daftar Pengeluaran</h3>
+    <% if (pengeluaran.length === 0) { %>
+      <p><em>Belum ada pengeluaran.</em></p>
+    <% } else { %>
+      <table class="print-table">
+        <thead>
+          <tr><th>No</th><th>Tanggal</th><th>Keterangan</th><th>Nominal</th></tr>
+        </thead>
+        <tbody>
+          <% pengeluaran.forEach(function(p, i) { 
+            const tgl = p.tanggal_pengeluaran;
+            const d = tgl.getDate() + '/' + (tgl.getMonth()+1) + '/' + tgl.getFullYear();
+          %>
+            <tr>
+              <td><%= i + 1 %></td>
+              <td><%= d %></td>
+              <td><%= p.keterangan %></td>
+              <td class="text-right"><%= formatRupiah(p.nominal) %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+
+    <!-- Rekap Anggota -->
+    <h3>Rekap Pembayaran per Anggota</h3>
+    <table class="print-table">
+      <thead>
+        <tr><th>No</th><th>Nama Anggota</th><th>Minggu Lunas</th></tr>
+      </thead>
+      <tbody>
+        <% rekap.forEach(function(r, i) { %>
+          <tr>
+            <td><%= i + 1 %></td>
+            <td><%= r.nama %></td>
+            <td><%= r.minggu_lunas %> / <%= totalMinggu %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+    <!-- Tanda Tangan -->
+    <div class="signatures">
+      <div class="sig-block">
+        <p>Bendahara</p>
+        <div class="sig-line"></div>
+        <p class="sig-label">( ............................ )</p>
+      </div>
+      <div class="sig-block">
+        <p>Ketua</p>
+        <div class="sig-line"></div>
+        <p class="sig-label">( ............................ )</p>
+      </div>
+    </div>
+
+    <button class="btn btn-primary no-print" onclick="window.print()">Cetak Halaman Ini</button>
+  </div>
+</body>
+</html>
