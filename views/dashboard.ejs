@@ -1,19 +1,26 @@
 <% const pageTitle = 'Dashboard Ringkas' %>
 <%- include('partials/head') %>
 
-<!-- Top Section / Header -->
-<div class="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4">
-  <div>
-    <div class="flex items-center gap-2 mb-2">
-      <span class="px-3 py-1 rounded-full bg-primary-container text-on-primary text-xs font-semibold tracking-wider uppercase">Periode Aktif: 2026/2027</span>
-      <span class="text-on-surface-variant text-xs">Mulai 24 Agustus 2026 • 52 Minggu</span>
+<!-- Top Section / Official Header with Logo KSR Ariyanti -->
+<div class="bg-surface-container-lowest p-5 md:p-6 rounded-2xl border border-surface-container shadow-xs mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+  <div class="flex items-center gap-4">
+    <!-- Official Logo KSR (Tampilan Statis / Non-Editable) -->
+    <div class="w-16 h-16 md:w-20 md:h-20 shrink-0 bg-white p-1 rounded-2xl border border-surface-container shadow-xs flex items-center justify-center select-none pointer-events-none">
+      <img src="/logo-ksr.png" alt="Logo KSR ASM Ariyanti" class="w-full h-full object-contain">
     </div>
-    <h1 class="text-2xl md:text-3xl font-bold text-primary tracking-tight">Data Keuangan Korps Sukarela ASM Ariyanti</h1>
-    <p class="text-sm md:text-base text-on-surface-variant mt-1">Laporan transparan rekapitulasi iuran kas anggota, denda kedisiplinan, dan arus kas operasional.</p>
+    <div>
+      <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+        <span class="px-2.5 py-0.5 rounded-full bg-secondary text-white text-[10px] font-bold tracking-wider uppercase">KORPS SUKARELA</span>
+        <span class="px-2.5 py-0.5 rounded-full bg-secondary-container text-secondary text-[10px] font-semibold">Periode 2026/2027</span>
+        <span class="text-on-surface-variant text-xs italic hidden sm:inline">"Per Humanitas Ad Pacem"</span>
+      </div>
+      <h1 class="text-xl md:text-2xl font-bold text-primary tracking-tight">Data Keuangan Korps Sukarela ASM Ariyanti</h1>
+      <p class="text-xs md:text-sm text-on-surface-variant mt-0.5">Laporan transparan rekapitulasi iuran kas anggota, denda kedisiplinan, dan arus operasional sukarelawan.</p>
+    </div>
   </div>
-  <div class="flex items-center gap-3">
-    <a href="/kas/cetak-lpj" target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary-container text-on-primary text-sm font-semibold hover:bg-primary transition-all shadow-sm">
-      <span class="material-symbols-outlined text-[18px]">print</span>
+  <div class="flex items-center gap-2.5 shrink-0 self-end md:self-center">
+    <a href="/kas/cetak-lpj" target="_blank" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary text-white text-xs font-semibold hover:bg-secondary/90 transition-all shadow-xs">
+      <span class="material-symbols-outlined text-[16px]">print</span>
       Cetak LPJ
     </a>
   </div>
@@ -21,57 +28,57 @@
 
 <!-- Info Banner for Public Mode -->
 <% if (!isAdmin) { %>
-  <div class="mb-6 p-4 rounded-2xl bg-secondary/10 border border-secondary/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-primary shadow-sm">
+  <div class="mb-6 p-4 rounded-2xl bg-secondary-container/50 border border-secondary/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-primary shadow-xs">
     <div class="flex items-center gap-2.5">
       <span class="material-symbols-outlined text-secondary text-[22px]">info</span>
       <span><strong>Mode Lihat Saja (Publik):</strong> Anda dapat memantau data iuran kas anggota secara transparan. Kotak centang dikunci dan hanya dapat diedit oleh Administrator.</span>
     </div>
-    <a href="/login" class="px-3.5 py-1.5 rounded-xl bg-primary-container text-white font-semibold hover:bg-primary transition-all whitespace-nowrap shadow-sm flex items-center gap-1.5">
+    <a href="/login" class="px-3.5 py-1.5 rounded-xl bg-secondary text-white font-semibold hover:bg-secondary/90 transition-all whitespace-nowrap shadow-xs flex items-center gap-1.5">
       <span class="material-symbols-outlined text-[16px]">key</span> Masuk Admin
     </a>
   </div>
 <% } %>
 
-<!-- 4 Summary Cards (Stitch Design with subtle blur glow) -->
+<!-- 4 Summary Cards (Warna Harmonis KSR Ariyanti) -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
   <!-- Card 1: Total Kas Masuk -->
-  <div class="bg-surface-container-lowest rounded-2xl p-6 shadow-sm border border-surface-container-high relative overflow-hidden group hover:shadow-md transition-all">
-    <div class="absolute right-0 top-0 w-32 h-32 bg-secondary-container/20 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
+  <div class="bg-surface-container-lowest rounded-2xl p-6 shadow-xs border border-surface-container relative overflow-hidden group hover:shadow-md transition-all">
+    <div class="absolute right-0 top-0 w-28 h-28 bg-emerald-50 rounded-full blur-2xl -mr-8 -mt-8 pointer-events-none"></div>
     <div class="flex items-center justify-between mb-4">
       <span class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Total Kas Masuk</span>
-      <div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-secondary">
+      <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
         <span class="material-symbols-outlined text-[20px]">south_west</span>
       </div>
     </div>
     <div class="text-2xl font-bold text-primary mb-1" id="val-kas"><%= formatRupiah(totalKas) %></div>
-    <div class="flex items-center gap-1.5 text-xs text-secondary font-medium">
+    <div class="flex items-center gap-1.5 text-xs text-emerald-700 font-medium">
       <span class="material-symbols-outlined text-[16px]">payments</span>
       <span>Tarif <%= formatRupiah(TARIF_KAS) %>/minggu</span>
     </div>
   </div>
 
   <!-- Card 2: Total Denda Masuk -->
-  <div class="bg-surface-container-lowest rounded-2xl p-6 shadow-sm border border-surface-container-high relative overflow-hidden group hover:shadow-md transition-all">
-    <div class="absolute right-0 top-0 w-32 h-32 bg-error-container/20 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
+  <div class="bg-surface-container-lowest rounded-2xl p-6 shadow-xs border border-surface-container relative overflow-hidden group hover:shadow-md transition-all">
+    <div class="absolute right-0 top-0 w-28 h-28 bg-rose-50 rounded-full blur-2xl -mr-8 -mt-8 pointer-events-none"></div>
     <div class="flex items-center justify-between mb-4">
       <span class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Total Denda Masuk</span>
-      <div class="w-10 h-10 rounded-xl bg-error-container/30 flex items-center justify-center text-error">
+      <div class="w-10 h-10 rounded-xl bg-rose-50 text-secondary flex items-center justify-center">
         <span class="material-symbols-outlined text-[20px]">warning</span>
       </div>
     </div>
     <div class="text-2xl font-bold text-primary mb-1" id="val-denda"><%= formatRupiah(totalDenda) %></div>
-    <div class="flex items-center gap-1.5 text-xs text-error font-medium">
+    <div class="flex items-center gap-1.5 text-xs text-secondary font-medium">
       <span class="material-symbols-outlined text-[16px]">info</span>
       <span>Denda <%= formatRupiah(TARIF_DENDA) %>/minggu</span>
     </div>
   </div>
 
   <!-- Card 3: Total Pengeluaran -->
-  <div class="bg-surface-container-lowest rounded-2xl p-6 shadow-sm border border-surface-container-high relative overflow-hidden group hover:shadow-md transition-all">
-    <div class="absolute right-0 top-0 w-32 h-32 bg-surface-container-highest/30 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
+  <div class="bg-surface-container-lowest rounded-2xl p-6 shadow-xs border border-surface-container relative overflow-hidden group hover:shadow-md transition-all">
+    <div class="absolute right-0 top-0 w-28 h-28 bg-surface-container rounded-full blur-2xl -mr-8 -mt-8 pointer-events-none"></div>
     <div class="flex items-center justify-between mb-4">
       <span class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Total Pengeluaran</span>
-      <div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-on-surface-variant">
+      <div class="w-10 h-10 rounded-xl bg-surface-container-low text-on-surface-variant flex items-center justify-center">
         <span class="material-symbols-outlined text-[20px]">north_east</span>
       </div>
     </div>
@@ -82,17 +89,17 @@
     </div>
   </div>
 
-  <!-- Card 4: Sisa Saldo Kas Bersih (Highlight Dark Card) -->
-  <div class="bg-primary-container text-on-primary rounded-2xl p-6 shadow-md border border-primary-container relative overflow-hidden group hover:shadow-lg transition-all">
-    <div class="absolute right-0 top-0 w-32 h-32 bg-secondary/30 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
+  <!-- Card 4: Sisa Saldo Kas Bersih (KSR Red Container Berwibawa) -->
+  <div class="bg-primary-container text-white rounded-2xl p-6 shadow-sm border border-primary-dark relative overflow-hidden group hover:shadow-md transition-all">
+    <div class="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
     <div class="flex items-center justify-between mb-4">
-      <span class="text-xs text-on-primary-container uppercase tracking-wider font-semibold">Sisa Saldo Kas Bersih</span>
-      <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white">
+      <span class="text-xs text-red-200 uppercase tracking-wider font-semibold">Sisa Saldo Kas Bersih</span>
+      <div class="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center text-white">
         <span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
       </div>
     </div>
     <div class="text-2xl font-bold text-white mb-1" id="val-saldo"><%= formatRupiah(sisaSaldo) %></div>
-    <div class="flex items-center gap-1.5 text-xs text-secondary-container font-medium">
+    <div class="flex items-center gap-1.5 text-xs text-red-100 font-medium">
       <span class="material-symbols-outlined text-[16px]">check_circle</span>
       <span>Total kas + denda - pengeluaran</span>
     </div>
@@ -100,7 +107,7 @@
 </div>
 
 <!-- Interactive Payment Ledger Section -->
-<div class="bg-surface-container-lowest rounded-2xl shadow-sm border border-surface-container-high p-6 mb-8">
+<div class="bg-surface-container-lowest rounded-2xl shadow-xs border border-surface-container p-6 mb-8">
   <!-- Toolbar Header -->
   <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
     <div>
@@ -129,7 +136,7 @@
     </div>
   </div>
 
-  <!-- ⭐ Step Pagination Bar per 10 Minggu (Fitur Baru) ⭐ -->
+  <!-- Step Pagination Bar per 10 Minggu -->
   <div class="mb-4 p-3 bg-surface-container-low/70 rounded-2xl border border-surface-container flex flex-col md:flex-row items-center justify-between gap-3">
     <!-- Tombol Prev / Next & Batch Pills -->
     <div class="flex items-center gap-1.5 flex-wrap w-full md:w-auto justify-center md:justify-start">
@@ -185,7 +192,7 @@
             <!-- Sticky Name Cell -->
             <td class="py-3 px-4 sticky left-0 bg-surface-container-lowest z-10 border-r border-surface-container font-medium text-primary">
               <div class="flex items-center gap-2.5">
-                <div class="w-7 h-7 rounded-full bg-secondary-container/40 text-secondary flex items-center justify-center font-bold text-[10px] shrink-0">
+                <div class="w-7 h-7 rounded-full bg-secondary-container text-secondary flex items-center justify-center font-bold text-[10px] shrink-0">
                   <%= initial %>
                 </div>
                 <span class="truncate"><%= a.nama %></span>
@@ -263,7 +270,7 @@ function setBatch(batchIndex) {
   document.querySelectorAll('.batch-btn').forEach((btn) => {
     const idx = parseInt(btn.dataset.index, 10);
     if (idx === currentBatch) {
-      btn.className = 'batch-btn px-3 py-1.5 rounded-xl bg-primary-container text-on-primary font-bold text-xs shadow-sm transition-all';
+      btn.className = 'batch-btn px-3 py-1.5 rounded-xl bg-secondary text-white font-bold text-xs shadow-xs transition-all';
     } else {
       btn.className = 'batch-btn px-3 py-1.5 rounded-xl bg-surface-container text-on-surface-variant hover:bg-surface-container-high text-xs font-medium transition-all';
     }

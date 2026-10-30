@@ -3,46 +3,83 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cetak LPJ — Keuangan KSR</title>
+  <title>Cetak LPJ — Keuangan KSR ASM Ariyanti</title>
   <link rel="stylesheet" href="/style.css">
+  <style>
+    .print-logo-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+      border-bottom: 2px solid #000;
+      padding-bottom: 1rem;
+    }
+    .print-logo-header img {
+      width: 75px;
+      height: 75px;
+      object-fit: contain;
+    }
+    .print-logo-text {
+      text-align: center;
+    }
+    .print-logo-text h1 {
+      font-size: 1.25rem;
+      margin: 0;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+    .print-logo-text h2 {
+      font-size: 1.05rem;
+      margin: 2px 0;
+      font-weight: 600;
+    }
+    .print-logo-text p {
+      font-size: 0.82rem;
+      margin: 0;
+      font-style: italic;
+    }
+  </style>
 </head>
 <body class="print-page">
   <div class="print-container">
-    <div class="print-header">
-      <h1>DATA KEUANGAN KORPS SUKARELA ASM ARIYANTI</h1>
-      <h2>Laporan Pertanggungjawaban (LPJ)</h2>
-      <p class="print-date">Dicetak: <%= new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %></p>
+    <div class="print-logo-header">
+      <img src="/logo-ksr.png" alt="Logo KSR ASM Ariyanti">
+      <div class="print-logo-text">
+        <h1>KORPS SUKARELA (KSR)</h1>
+        <h2>AKADEMI SEKRETARI & MANAJEMEN ARIYANTI</h2>
+        <p>Laporan Pertanggungjawaban (LPJ) Keuangan Kas • "Per Humanitas Ad Pacem"</p>
+        <small style="font-size: 0.75rem; color: #555;">Dicetak pada: <%= new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %></small>
+      </div>
     </div>
 
-    <hr>
-
     <!-- Ringkasan -->
-    <h3>Ringkasan Keuangan</h3>
+    <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1rem;">Ringkasan Arus Kas</h3>
     <table class="print-summary">
-      <tr><td>Total Kas Masuk</td><td class="text-right"><%= formatRupiah(totalKas) %></td></tr>
-      <tr><td>Total Denda Masuk</td><td class="text-right"><%= formatRupiah(totalDenda) %></td></tr>
-      <tr><td>Total Pengeluaran</td><td class="text-right"><%= formatRupiah(totalPengeluaran) %></td></tr>
+      <tr><td>Total Kas Masuk (Iuran Anggota)</td><td class="text-right"><%= formatRupiah(totalKas) %></td></tr>
+      <tr><td>Total Denda Masuk (Keterlambatan)</td><td class="text-right"><%= formatRupiah(totalDenda) %></td></tr>
+      <tr><td>Total Pengeluaran Kas</td><td class="text-right"><%= formatRupiah(totalPengeluaran) %></td></tr>
       <tr class="row-total"><td><strong>Sisa Saldo Kas Bersih</strong></td><td class="text-right"><strong><%= formatRupiah(sisaSaldo) %></strong></td></tr>
     </table>
 
     <!-- Daftar Pengeluaran -->
-    <h3>Daftar Pengeluaran</h3>
+    <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1rem;">Daftar Pengeluaran Operasional</h3>
     <% if (pengeluaran.length === 0) { %>
-      <p><em>Belum ada pengeluaran.</em></p>
+      <p style="font-size: 0.85rem; font-style: italic; color: #666;">Belum ada catatan pengeluaran kas.</p>
     <% } else { %>
       <table class="print-table">
         <thead>
-          <tr><th>No</th><th>Tanggal</th><th>Keterangan</th><th>Nominal</th></tr>
+          <tr><th style="width: 40px; text-align: center;">No</th><th>Tanggal</th><th>Keterangan / Keperluan</th><th class="text-right">Nominal</th></tr>
         </thead>
         <tbody>
           <% pengeluaran.forEach(function(p, i) { 
-            const tgl = p.tanggal_pengeluaran;
+            const tgl = p.tanggal_pengeluaran instanceof Date ? p.tanggal_pengeluaran : new Date(p.tanggal_pengeluaran);
             const d = tgl.getDate() + '/' + (tgl.getMonth()+1) + '/' + tgl.getFullYear();
           %>
             <tr>
-              <td><%= i + 1 %></td>
+              <td style="text-align: center;"><%= i + 1 %></td>
               <td><%= d %></td>
-              <td><%= p.keterangan %></td>
+              <td><%= p.keterangan || '-' %></td>
               <td class="text-right"><%= formatRupiah(p.nominal) %></td>
             </tr>
           <% }) %>
@@ -51,17 +88,18 @@
     <% } %>
 
     <!-- Rekap Anggota -->
-    <h3>Rekap Pembayaran per Anggota</h3>
+    <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1rem;">Rekapitulasi Pelunasan Kas Anggota</h3>
     <table class="print-table">
       <thead>
-        <tr><th>No</th><th>Nama Anggota</th><th>Minggu Lunas</th></tr>
+        <tr><th style="width: 40px; text-align: center;">No</th><th>Nama Sukarelawan</th><th style="text-align: center;">Minggu Lunas</th><th style="text-align: center;">Status</th></tr>
       </thead>
       <tbody>
         <% rekap.forEach(function(r, i) { %>
           <tr>
-            <td><%= i + 1 %></td>
+            <td style="text-align: center;"><%= i + 1 %></td>
             <td><%= r.nama %></td>
-            <td><%= r.minggu_lunas %> / <%= totalMinggu %></td>
+            <td style="text-align: center;"><%= r.minggu_lunas %> / <%= totalMinggu %> Minggu</td>
+            <td style="text-align: center;"><%= r.minggu_lunas === totalMinggu ? 'Lunas Penuh' : (r.minggu_lunas > 0 ? 'Sebagian' : 'Belum Bayar') %></td>
           </tr>
         <% }) %>
       </tbody>
@@ -70,18 +108,22 @@
     <!-- Tanda Tangan -->
     <div class="signatures">
       <div class="sig-block">
-        <p>Bendahara</p>
+        <p>Bendahara KSR</p>
         <div class="sig-line"></div>
-        <p class="sig-label">( ............................ )</p>
+        <p class="sig-label">( ........................................ )</p>
       </div>
       <div class="sig-block">
-        <p>Ketua</p>
+        <p>Ketua KSR ASM Ariyanti</p>
         <div class="sig-line"></div>
-        <p class="sig-label">( ............................ )</p>
+        <p class="sig-label">( ........................................ )</p>
       </div>
     </div>
 
-    <button class="btn btn-primary no-print" onclick="window.print()">Cetak Halaman Ini</button>
+    <div style="text-align: center; margin-top: 2rem;">
+      <button class="btn btn-primary no-print" onclick="window.print()" style="padding: 0.6rem 1.5rem; background: #991B1B; color: #fff; border-radius: 8px; border: none; cursor: pointer; font-weight: 600;">
+        🖨 Cetak Dokumen LPJ Ini
+      </button>
+    </div>
   </div>
 </body>
 </html>
