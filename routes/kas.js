@@ -41,20 +41,31 @@ router.get('/kas-masuk', requireLogin, async (req, res) => {
 });
 
 router.post('/kas-masuk', requireLogin, async (req, res) => {
-  const { anggota_id, tanggal_periode, apakah_bayar, kena_denda } = req.body;
+  let { anggota_id, tanggal_periode, apakah_bayar, kena_denda } = req.body;
+  if (!anggota_id) {
+    return res.redirect('/kas-masuk?error=Silakan pilih anggota');
+  }
+  if (!tanggal_periode) {
+    return res.redirect('/kas-masuk?error=Pilih minimal satu periode minggu');
+  }
+
   const bayar = apakah_bayar === 'on';
   const denda = kena_denda === 'on';
+  const tglList = Array.isArray(tanggal_periode) ? tanggal_periode : [tanggal_periode];
+
   try {
-    await pool.query(`
-      INSERT INTO pembayaran_kas (anggota_id, tanggal_periode, apakah_bayar, kena_denda)
-      VALUES ($1, $2, $3, $4)
-      ON CONFLICT (anggota_id, tanggal_periode)
-      DO UPDATE SET apakah_bayar = $3, kena_denda = $4
-    `, [anggota_id, tanggal_periode, bayar, denda]);
-    res.redirect('/kas-masuk?success=1');
+    for (const tgl of tglList) {
+      await pool.query(`
+        INSERT INTO pembayaran_kas (anggota_id, tanggal_periode, apakah_bayar, kena_denda)
+        VALUES ($1, $2, $3, $4)
+        ON CONFLICT (anggota_id, tanggal_periode)
+        DO UPDATE SET apakah_bayar = $3, kena_denda = $4
+      `, [anggota_id, tgl, bayar, denda]);
+    }
+    res.redirect(`/kas-masuk?success=Pembayaran untuk ${tglList.length} minggu berhasil disimpan!`);
   } catch (err) {
     console.error(err);
-    res.redirect('/kas-masuk?error=Gagal menyimpan');
+    res.redirect('/kas-masuk?error=Gagal menyimpan data');
   }
 });
 
