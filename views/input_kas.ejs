@@ -1,52 +1,148 @@
-<% const pageTitle = 'Input Uang Kas' %>
+<% const pageTitle = 'Input Kas Masuk' %>
 <%- include('partials/head') %>
 
-<h1 class="page-title">Input Pembayaran Uang Kas</h1>
+<!-- Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+  <div>
+    <div class="flex items-center gap-2 mb-2">
+      <span class="px-3 py-1 rounded-full bg-secondary-container/40 text-secondary text-xs font-semibold uppercase tracking-wider">Transaksi Kas</span>
+      <span class="text-on-surface-variant text-xs">Pencatatan Iuran Mingguan</span>
+    </div>
+    <h1 class="text-2xl md:text-3xl font-bold text-primary tracking-tight">Input Pembayaran Uang Kas</h1>
+    <p class="text-sm text-on-surface-variant mt-1">Catat dan perbarui status pembayaran iuran kas dan denda kedisiplinan sukarelawan.</p>
+  </div>
+</div>
 
 <% if (success) { %>
-  <div class="alert alert-success">Data pembayaran berhasil disimpan!</div>
+  <div class="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm flex items-center gap-2">
+    <span class="material-symbols-outlined text-[20px]">check_circle</span>
+    Data pembayaran kas berhasil disimpan ke database!
+  </div>
 <% } %>
 
-<div class="card form-card">
-  <form method="POST" action="/kas-masuk">
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-
-    <div class="form-group">
-      <label for="anggota_id">Pilih Anggota</label>
-      <select id="anggota_id" name="anggota_id" required>
-        <option value="">— Pilih anggota —</option>
-        <% anggota.forEach(function(a) { %>
-          <option value="<%= a.id %>"><%= a.nama %></option>
-        <% }) %>
-      </select>
+<!-- Mini Summary Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+  <div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm border border-surface-container-high flex items-center justify-between">
+    <div>
+      <div class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold mb-1">Tarif Kas Mingguan</div>
+      <div class="text-2xl font-bold text-primary"><%= formatRupiah(TARIF_KAS) %></div>
+      <div class="text-xs text-secondary mt-1">Per anggota setiap periode 7 hari</div>
     </div>
-
-    <div class="form-group">
-      <label for="tanggal_periode">Pilih Minggu</label>
-      <select id="tanggal_periode" name="tanggal_periode" required>
-        <option value="">— Pilih minggu —</option>
-        <% weeks.forEach(function(w) { %>
-          <option value="<%= w.dateStr %>">Minggu <%= w.number %> (<%= formatTgl(w.from) %> - <%= formatTgl(w.to) %> <%= w.to.getFullYear() %>)</option>
-        <% }) %>
-      </select>
+    <div class="w-12 h-12 rounded-xl bg-secondary-container/30 text-secondary flex items-center justify-center">
+      <span class="material-symbols-outlined text-[24px]">payments</span>
     </div>
+  </div>
 
-    <div class="form-group">
-      <label class="checkbox-label">
-        <input type="checkbox" name="apakah_bayar">
-        Sudah Bayar (Rp <%= TARIF_KAS.toLocaleString('id-ID') %>)
-      </label>
+  <div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm border border-surface-container-high flex items-center justify-between">
+    <div>
+      <div class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold mb-1">Tarif Denda Keterlambatan</div>
+      <div class="text-2xl font-bold text-error"><%= formatRupiah(TARIF_DENDA) %></div>
+      <div class="text-xs text-on-surface-variant mt-1">Bagi anggota yang lewat tenggat waktu</div>
     </div>
-
-    <div class="form-group">
-      <label class="checkbox-label">
-        <input type="checkbox" name="kena_denda">
-        Kena Denda (Rp <%= TARIF_DENDA.toLocaleString('id-ID') %>)
-      </label>
+    <div class="w-12 h-12 rounded-xl bg-error-container/30 text-error flex items-center justify-center">
+      <span class="material-symbols-outlined text-[24px]">warning</span>
     </div>
+  </div>
+</div>
 
-    <button type="submit" class="btn btn-primary">Simpan</button>
-  </form>
+<!-- Main Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+  <!-- Form Input (7 cols) -->
+  <div class="lg:col-span-7">
+    <div class="bg-surface-container-lowest p-6 md:p-8 rounded-2xl shadow-sm border border-surface-container-high">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="text-lg font-bold text-primary">Formulir Kas Masuk</h2>
+          <p class="text-xs text-on-surface-variant">Pilih anggota dan periode minggu yang ingin dicatat.</p>
+        </div>
+        <div class="w-9 h-9 rounded-xl bg-primary-container text-on-primary flex items-center justify-center">
+          <span class="material-symbols-outlined text-[20px]">add_card</span>
+        </div>
+      </div>
+
+      <form method="POST" action="/kas-masuk" class="space-y-5">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+        <!-- Pilih Anggota -->
+        <div>
+          <label class="block text-xs font-semibold text-primary mb-1.5">Pilih Anggota KSR (A-Z)</label>
+          <div class="relative">
+            <select name="anggota_id" required
+              class="w-full bg-surface-container-low text-on-surface px-4 py-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-secondary appearance-none border border-transparent focus:border-secondary transition-all">
+              <option value="" disabled selected>— Pilih nama sukarelawan —</option>
+              <% anggota.forEach(function(a) { %>
+                <option value="<%= a.id %>"><%= a.nama %></option>
+              <% }) %>
+            </select>
+            <span class="material-symbols-outlined absolute right-3 top-3 text-on-surface-variant pointer-events-none text-[20px]">expand_more</span>
+          </div>
+        </div>
+
+        <!-- Pilih Minggu -->
+        <div>
+          <label class="block text-xs font-semibold text-primary mb-1.5">Pilih Periode Minggu</label>
+          <div class="relative">
+            <select name="tanggal_periode" required
+              class="w-full bg-surface-container-low text-on-surface px-4 py-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-secondary appearance-none border border-transparent focus:border-secondary transition-all">
+              <option value="" disabled selected>— Pilih minggu kas —</option>
+              <% weeks.forEach(function(w) { %>
+                <option value="<%= w.dateStr %>">Minggu <%= w.number %> (<%= formatTgl(w.from) %> - <%= formatTgl(w.to) %> <%= w.to.getFullYear() %>)</option>
+              <% }) %>
+            </select>
+            <span class="material-symbols-outlined absolute right-3 top-3 text-on-surface-variant pointer-events-none text-[20px]">expand_more</span>
+          </div>
+        </div>
+
+        <!-- Checkbox Options -->
+        <div class="p-4 rounded-xl bg-surface-container-low/60 border border-surface-container space-y-3">
+          <label class="flex items-center gap-3 cursor-pointer">
+            <input type="checkbox" name="apakah_bayar" class="w-4 h-4 rounded text-secondary focus:ring-secondary">
+            <span class="text-xs font-semibold text-primary flex items-center gap-1.5">
+              <span>💰</span> Sudah Bayar Kas (<%= formatRupiah(TARIF_KAS) %>)
+            </span>
+          </label>
+
+          <label class="flex items-center gap-3 cursor-pointer">
+            <input type="checkbox" name="kena_denda" class="w-4 h-4 rounded text-error focus:ring-error">
+            <span class="text-xs font-semibold text-error flex items-center gap-1.5">
+              <span>⚠️</span> Kena Denda Keterlambatan (<%= formatRupiah(TARIF_DENDA) %>)
+            </span>
+          </label>
+        </div>
+
+        <button type="submit" class="w-full py-3 px-4 rounded-xl bg-primary-container text-on-primary text-xs font-semibold hover:bg-primary transition-all shadow-sm flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">save</span>
+          Simpan Transaksi Kas
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Info Card (5 cols) -->
+  <div class="lg:col-span-5">
+    <div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm border border-surface-container-high space-y-4">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-xl bg-secondary-container/40 text-secondary flex items-center justify-center">
+          <span class="material-symbols-outlined text-[18px]">lightbulb</span>
+        </div>
+        <h3 class="text-sm font-bold text-primary">Tips Cepat Input Kas</h3>
+      </div>
+      <p class="text-xs text-on-surface-variant leading-relaxed">
+        Anda juga bisa langsung mencentang pembayaran di <strong>Dashboard</strong> secara interaktif tanpa harus membuka halaman ini satu per satu.
+      </p>
+      <div class="p-4 rounded-xl bg-surface-container-low text-xs space-y-2 border border-surface-container">
+        <div class="font-semibold text-primary">Aturan Perhitungan Saldo:</div>
+        <ul class="list-disc pl-4 text-on-surface-variant space-y-1">
+          <li>Total Kas = Total centang bayar × <%= formatRupiah(TARIF_KAS) %></li>
+          <li>Total Denda = Total centang denda × <%= formatRupiah(TARIF_DENDA) %></li>
+          <li>Sisa Kas = Kas Masuk + Denda - Total Pengeluaran</li>
+        </ul>
+      </div>
+      <a href="/" class="inline-flex items-center gap-2 text-xs font-semibold text-secondary hover:underline">
+        Buka Dashboard Interaktif →
+      </a>
+    </div>
+  </div>
 </div>
 
 <%- include('partials/foot') %>

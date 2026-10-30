@@ -3,60 +3,147 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= typeof pageTitle !== 'undefined' ? pageTitle + ' — ' : '' %>Keuangan KSR</title>
+  <title><%= typeof pageTitle !== 'undefined' ? pageTitle + ' — ' : '' %>Keuangan KSR ASM Ariyanti</title>
+  
+  <!-- Fonts & Icons from Stitch Design -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN with Stitch Theme Configuration -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#091426",
+            "primary-container": "#1e293b",
+            "on-primary": "#ffffff",
+            "on-primary-container": "#8590a6",
+            "secondary": "#006398",
+            "secondary-container": "#5bb8fe",
+            "on-secondary": "#ffffff",
+            "on-secondary-container": "#00476e",
+            "surface": "#faf8ff",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#f2f3ff",
+            "surface-container": "#eaedff",
+            "surface-container-high": "#e2e7ff",
+            "surface-container-highest": "#dae2fd",
+            "on-surface": "#131b2e",
+            "on-surface-variant": "#45474c",
+            "error": "#ba1a1a",
+            "error-container": "#ffdad6",
+            "on-error": "#ffffff",
+            "on-error-container": "#93000a",
+          },
+          fontFamily: {
+            sans: ["Inter", "-apple-system", "sans-serif"],
+          }
+        }
+      }
+    };
+  </script>
   <link rel="stylesheet" href="/style.css">
 </head>
-<body>
-  <!-- Mobile header -->
-  <header class="mobile-header">
-    <button class="hamburger" onclick="document.querySelector('.sidebar').classList.toggle('open')" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-    <span class="mobile-title">Keuangan KSR</span>
+<body class="bg-surface font-sans text-on-surface min-h-screen">
+
+  <!-- Mobile Top Header -->
+  <header class="md:hidden fixed top-0 left-0 right-0 h-16 bg-primary-container z-50 flex items-center justify-between px-4 shadow-sm text-white">
+    <div class="flex items-center gap-3">
+      <button onclick="document.getElementById('sidebar').classList.toggle('-translate-x-full')" class="p-2 rounded-lg hover:bg-white/10" aria-label="Menu">
+        <span class="material-symbols-outlined text-[24px]">menu</span>
+      </button>
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center font-bold text-xs text-white">KSR</div>
+        <span class="font-bold text-sm tracking-wide">Keuangan KSR</span>
+      </div>
+    </div>
+    <div class="text-xs text-on-primary-container bg-white/10 px-2.5 py-1 rounded-full">ASM Ariyanti</div>
   </header>
 
-  <!-- Sidebar -->
-  <nav class="sidebar">
-    <div class="sidebar-brand">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+  <!-- Sidebar (Stitch Design) -->
+  <aside id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-surface-container-low z-50 flex flex-col pt-6 pb-6 shadow-[0_1px_8px_rgba(0,0,0,0.04)] border-r border-surface-container transition-transform duration-300 -translate-x-full md:translate-x-0">
+    <!-- Brand -->
+    <div class="px-6 mb-8 flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-on-primary font-bold text-lg shadow-sm">KSR</div>
       <div>
-        <strong>Keuangan KSR</strong>
-        <small>ASM Ariyanti</small>
+        <div class="font-bold text-primary text-base leading-tight">Keuangan KSR</div>
+        <div class="text-xs text-on-surface-variant">ASM Ariyanti</div>
       </div>
     </div>
 
-    <ul class="sidebar-menu">
-      <li><a href="/" class="<%= currentPath === '/' ? 'active' : '' %>">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-        Dashboard Ringkas</a></li>
-      <li><a href="/anggota" class="<%= currentPath === '/anggota' ? 'active' : '' %>">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        Daftar Anggota</a></li>
-      <li><a href="/kas-masuk" class="<%= currentPath === '/kas-masuk' ? 'active' : '' %>">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        Input Uang Kas</a></li>
-      <li><a href="/pengeluaran" class="<%= currentPath === '/pengeluaran' ? 'active' : '' %>">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-        Catat Pengeluaran</a></li>
-      <li><a href="/settings" class="<%= currentPath === '/settings' ? 'active' : '' %>">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        Pengaturan Akun</a></li>
-    </ul>
+    <!-- Navigation Menu -->
+    <nav class="flex-1 px-4 space-y-1.5 overflow-y-auto">
+      <a href="/" class="flex items-center px-4 py-2.5 rounded-xl transition-all <%= currentPath === '/' ? 'bg-primary-container text-on-primary font-semibold shadow-sm' : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface' %>">
+        <span class="material-symbols-outlined mr-3 text-[20px]">dashboard</span>
+        Dashboard
+      </a>
+      <a href="/anggota" class="flex items-center px-4 py-2.5 rounded-xl transition-all <%= currentPath === '/anggota' ? 'bg-primary-container text-on-primary font-semibold shadow-sm' : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface' %>">
+        <span class="material-symbols-outlined mr-3 text-[20px]">group</span>
+        Daftar Anggota
+      </a>
+      <a href="/kas-masuk" class="flex items-center px-4 py-2.5 rounded-xl transition-all <%= currentPath === '/kas-masuk' ? 'bg-primary-container text-on-primary font-semibold shadow-sm' : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface' %>">
+        <span class="material-symbols-outlined mr-3 text-[20px]">south_west</span>
+        Input Kas Masuk
+      </a>
+      <a href="/pengeluaran" class="flex items-center px-4 py-2.5 rounded-xl transition-all <%= currentPath === '/pengeluaran' ? 'bg-primary-container text-on-primary font-semibold shadow-sm' : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface' %>">
+        <span class="material-symbols-outlined mr-3 text-[20px]">north_east</span>
+        Catat Pengeluaran
+      </a>
+      <a href="/settings" class="flex items-center px-4 py-2.5 rounded-xl transition-all <%= currentPath === '/settings' ? 'bg-primary-container text-on-primary font-semibold shadow-sm' : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface' %>">
+        <span class="material-symbols-outlined mr-3 text-[20px]">settings</span>
+        Pengaturan
+      </a>
+      <a href="/kas/cetak-lpj" target="_blank" class="flex items-center px-4 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all">
+        <span class="material-symbols-outlined mr-3 text-[20px]">print</span>
+        Cetak LPJ
+      </a>
+    </nav>
 
-    <div class="sidebar-footer">
-      <form method="POST" action="/logout" class="logout-form">
+    <!-- Sidebar Footer -->
+    <div class="px-4 pt-4 border-t border-surface-container">
+      <div class="flex items-center justify-between mb-3 px-2">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center text-xs font-semibold">
+            <%= (user && user.username) ? user.username.charAt(0).toUpperCase() : 'A' %>
+          </div>
+          <div class="text-xs">
+            <div class="font-semibold text-primary truncate max-w-[100px]"><%= user ? user.username : 'Admin' %></div>
+            <div class="text-on-surface-variant">Administrator</div>
+          </div>
+        </div>
+      </div>
+      <form method="POST" action="/logout">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-        <button type="submit" class="btn-logout">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-          Keluar
+        <button type="submit" class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-error hover:bg-error-container/40 transition-colors">
+          <span class="material-symbols-outlined text-[18px]">logout</span>
+          Keluar dari Sistem
         </button>
       </form>
-      <div class="sidebar-user">Masuk sebagai <strong><%= user.username %></strong></div>
     </div>
-  </nav>
+  </aside>
 
-  <!-- Sidebar overlay for mobile -->
-  <div class="sidebar-overlay" onclick="document.querySelector('.sidebar').classList.remove('open')"></div>
+  <!-- Sidebar Overlay for Mobile -->
+  <div onclick="document.getElementById('sidebar').classList.add('-translate-x-full')" class="md:hidden fixed inset-0 bg-black/30 z-40 hidden" id="sidebar-overlay"></div>
 
-  <!-- Main content -->
-  <main class="content">
+  <!-- Main Content Wrapper -->
+  <div class="md:pl-64 flex flex-col min-h-screen">
+    <!-- Desktop Top Bar -->
+    <header class="hidden md:flex h-16 bg-primary-container items-center justify-between px-8 text-white sticky top-0 z-30 shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+      <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-secondary-container text-[22px]">volunteer_activism</span>
+        <span class="text-sm font-medium tracking-wide">Sistem Informasi Keuangan Korps Sukarela (KSR) ASM Ariyanti</span>
+      </div>
+      <div class="flex items-center gap-3 text-xs text-on-primary-container">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-white font-medium">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          Sistem Online
+        </span>
+      </div>
+    </header>
+
+    <!-- Page Content Container -->
+    <main class="flex-1 p-4 md:p-8 pt-20 md:pt-8 bg-surface">

@@ -1,74 +1,139 @@
 <% const pageTitle = 'Daftar Anggota' %>
 <%- include('partials/head') %>
 
-<h1 class="page-title">Daftar Anggota KSR</h1>
+<!-- Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+  <div>
+    <div class="flex items-center gap-2 mb-2">
+      <span class="px-3 py-1 rounded-full bg-secondary-container/40 text-secondary text-xs font-semibold uppercase tracking-wider">Database KSR</span>
+      <span class="text-on-surface-variant text-xs">Total <%= anggota.length %> Anggota Terdaftar</span>
+    </div>
+    <h1 class="text-2xl md:text-3xl font-bold text-primary tracking-tight">Daftar Anggota Korps Sukarela</h1>
+    <p class="text-sm text-on-surface-variant mt-1">Kelola data seluruh sukarelawan aktif KSR ASM Ariyanti yang terdaftar dalam pencatatan kas.</p>
+  </div>
+</div>
 
 <% if (success) { %>
-  <div class="alert alert-success"><%= success %></div>
+  <div class="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm flex items-center gap-2">
+    <span class="material-symbols-outlined text-[20px]">check_circle</span>
+    <%= success %>
+  </div>
 <% } %>
 <% if (error) { %>
-  <div class="alert alert-error"><%= error %></div>
+  <div class="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-center gap-2">
+    <span class="material-symbols-outlined text-[20px]">error</span>
+    <%= error %>
+  </div>
 <% } %>
 
-<!-- Add member form -->
-<div class="card form-card">
-  <h2 class="card-title">Tambah Anggota Baru</h2>
-  <form method="POST" action="/anggota" class="inline-form">
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-    <input type="text" name="nama" placeholder="Nama lengkap anggota" required class="input-flex">
-    <button type="submit" class="btn btn-primary">Tambah</button>
-  </form>
-</div>
+<!-- Main Grid: Form Tambah (Kiri) & Tabel Anggota (Kanan) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+  <!-- Form Tambah Anggota (4 cols) -->
+  <div class="lg:col-span-4">
+    <div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm border border-surface-container-high sticky top-24">
+      <div class="flex items-center gap-2.5 mb-4">
+        <div class="w-9 h-9 rounded-xl bg-primary-container text-on-primary flex items-center justify-center">
+          <span class="material-symbols-outlined text-[20px]">person_add</span>
+        </div>
+        <div>
+          <h2 class="text-base font-bold text-primary">Tambah Anggota Baru</h2>
+          <p class="text-xs text-on-surface-variant">Masukkan nama lengkap sukarelawan.</p>
+        </div>
+      </div>
 
-<!-- Search -->
-<div class="search-box" style="margin-bottom:1rem">
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-  <input type="text" id="searchAnggota" placeholder="Cari nama anggota..." oninput="filterAnggota()">
-</div>
+      <form method="POST" action="/anggota" class="space-y-4">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div>
+          <label class="block text-xs font-semibold text-primary mb-1.5">Nama Lengkap</label>
+          <input type="text" name="nama" placeholder="Contoh: Rian Ardiansyah" required
+            class="w-full px-4 py-2.5 bg-surface-container-low rounded-xl text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary border border-transparent focus:border-secondary transition-all">
+        </div>
+        <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-primary-container text-on-primary text-xs font-semibold hover:bg-primary transition-all shadow-sm flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">add</span>
+          Simpan Anggota
+        </button>
+      </form>
+    </div>
+  </div>
 
-<!-- Members table -->
-<div class="table-wrapper">
-  <table class="data-table" id="anggotaTable">
-    <thead>
-      <tr>
-        <th>No</th>
-        <th>Nama Anggota</th>
-        <th>Aksi</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% anggota.forEach(function(a, i) { %>
-        <tr data-nama="<%= a.nama.toLowerCase() %>">
-          <td><%= i + 1 %></td>
-          <td><%= a.nama %></td>
-          <td>
-            <form method="POST" action="/anggota/hapus/<%= a.id %>" style="display:inline"
-              onsubmit="return confirm('Yakin ingin menghapus <%= a.nama %>? Semua data pembayaran anggota ini akan ikut terhapus.')">
-              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-              <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
-            </form>
-          </td>
-        </tr>
-      <% }) %>
-    </tbody>
-  </table>
-</div>
+  <!-- Tabel Anggota (8 cols) -->
+  <div class="lg:col-span-8">
+    <div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm border border-surface-container-high">
+      <!-- Search & Counter -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+        <div class="relative w-full sm:w-72">
+          <span class="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant text-[18px]">search</span>
+          <input type="text" id="memberSearch" oninput="filterAnggota()" placeholder="Cari nama anggota..."
+            class="w-full pl-9 pr-4 py-2 bg-surface-container-low rounded-xl text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary transition-all">
+        </div>
+        <div class="text-xs text-on-surface-variant font-medium">
+          Menampilkan <span id="memberCount" class="font-bold text-primary"><%= anggota.length %></span> anggota
+        </div>
+      </div>
 
-<p class="text-secondary">Total: <%= anggota.length %> anggota</p>
+      <!-- Table -->
+      <div class="overflow-x-auto rounded-xl border border-surface-container">
+        <table class="w-full text-left border-collapse text-xs" id="anggotaTable">
+          <thead>
+            <tr class="bg-surface-container-low text-on-surface-variant uppercase text-[11px] font-semibold tracking-wider">
+              <th class="py-3 px-4 w-12 text-center">No</th>
+              <th class="py-3 px-4">Nama Sukarelawan</th>
+              <th class="py-3 px-4 w-24 text-right">Aksi</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-container">
+            <% anggota.forEach(function(a, idx) { 
+              const parts = a.nama.trim().split(' ');
+              const initial = (parts[0][0] + (parts.length > 1 ? parts[1][0] : '')).toUpperCase();
+            %>
+              <tr class="hover:bg-surface-container-low/60 transition-colors" data-nama="<%= a.nama.toLowerCase() %>">
+                <td class="py-3 px-4 text-center text-on-surface-variant font-medium idx-cell">
+                  <%= idx + 1 %>
+                </td>
+                <td class="py-3 px-4">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-surface-container-highest text-primary flex items-center justify-center font-bold text-xs">
+                      <%= initial %>
+                    </div>
+                    <div>
+                      <div class="font-semibold text-primary"><%= a.nama %></div>
+                      <div class="text-[11px] text-on-surface-variant">Anggota Aktif KSR</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="py-3 px-4 text-right">
+                  <form method="POST" action="/anggota/hapus/<%= a.id %>" style="display:inline"
+                    onsubmit="return confirm('Yakin ingin menghapus <%= a.nama %>? Seluruh riwayat kas anggota ini juga akan ikut terhapus.')">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button type="submit" class="p-2 rounded-lg text-error hover:bg-error-container/40 transition-colors" title="Hapus Anggota">
+                      <span class="material-symbols-outlined text-[18px]">delete</span>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 function filterAnggota() {
-  var q = document.getElementById('searchAnggota').value.toLowerCase();
-  var rows = document.querySelectorAll('#anggotaTable tbody tr');
-  var no = 1;
+  const q = document.getElementById('memberSearch').value.toLowerCase();
+  const rows = document.querySelectorAll('#anggotaTable tbody tr');
+  let count = 0;
   rows.forEach(function(tr) {
     if (tr.dataset.nama.includes(q)) {
       tr.style.display = '';
-      tr.children[0].textContent = no++;
+      count++;
+      tr.querySelector('.idx-cell').textContent = count;
     } else {
       tr.style.display = 'none';
     }
   });
+  document.getElementById('memberCount').textContent = count;
 }
 </script>
 
