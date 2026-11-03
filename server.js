@@ -46,12 +46,17 @@ const sessionConfig = {
   },
 };
 
-if (process.env.DATABASE_URL) {
-  sessionConfig.store = new PgSession({ 
-    pool, 
-    tableName: 'session',
-    createTableIfMissing: true 
-  });
+// Hanya gunakan PgSession jika DATABASE_URL ada dan valid
+if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes('pooler.supabase.com')) {
+  try {
+    sessionConfig.store = new PgSession({ 
+      pool, 
+      tableName: 'session',
+      createTableIfMissing: true 
+    });
+  } catch (e) {
+    console.warn('Gagal pasang pg-session store, fallback ke memory session:', e.message);
+  }
 }
 
 app.use(session(sessionConfig));

@@ -8,6 +8,11 @@ if (process.env.DATABASE_URL) {
   pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: isProduction ? { rejectUnauthorized: false } : false,
+    connectionTimeoutMillis: 5000,
+  });
+  // Tangani event error agar serverless function tidak crash/500
+  pool.on('error', (err) => {
+    console.error('Unexpected error on idle database client', err);
   });
 } else {
   // Mode lokal otomatis jika belum ada PostgreSQL yang terinstall di komputer
