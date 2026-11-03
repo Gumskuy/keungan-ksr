@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const { requireLogin } = require('../middleware/auth');
+const { generateExcelReport } = require('../excel');
 
 const TARIF_KAS   = parseInt(process.env.TARIF_KAS, 10)   || 5000;
 const TARIF_DENDA = parseInt(process.env.TARIF_DENDA, 10)  || 5000;
@@ -129,6 +130,25 @@ router.get('/kas/cetak-lpj', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send('Terjadi kesalahan');
+  }
+});
+
+/* Export Rekap Kas ke Excel (.xlsx) */
+router.get('/kas/export-excel', async (req, res) => {
+  try {
+    const batch = req.query.batch !== undefined ? req.query.batch : 'all';
+    const { excelBuffer, batchTitle } = await generateExcelReport(batch);
+
+    const safeTitle = batchTitle.replace(/[^a-zA-Z0-9_-]/g, '_');
+    const today = new Date().toISOString().split('T')[0];
+    const filename = `Laporan_Kas_KSR_Ariyanti_${safeTitle}_${today}.xlsx`;
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.send(excelBuffer);
+  } catch (err) {
+    console.error('Export Excel error:', err);
+    res.status(500).send('Gagal mengekspor data ke Excel');
   }
 });
 
