@@ -33,31 +33,17 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 /* ── Session ───────────────────────────────────────────── */
-const isProd = process.env.NODE_ENV === 'production';
 const sessionConfig = {
   secret: process.env.SESSION_SECRET || 'ksr-secret-change-me',
   resave: false,
   saveUninitialized: false,
   cookie: {
     maxAge: 24 * 60 * 60 * 1000,
-    secure: isProd,
+    secure: false, // Biarkan kompatibel untuk semua environment
     httpOnly: true,
-    sameSite: isProd ? 'none' : 'lax',
+    sameSite: 'lax',
   },
 };
-
-// Hanya gunakan PgSession jika DATABASE_URL ada dan valid
-if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes('pooler.supabase.com')) {
-  try {
-    sessionConfig.store = new PgSession({ 
-      pool, 
-      tableName: 'session',
-      createTableIfMissing: true 
-    });
-  } catch (e) {
-    console.warn('Gagal pasang pg-session store, fallback ke memory session:', e.message);
-  }
-}
 
 app.use(session(sessionConfig));
 
