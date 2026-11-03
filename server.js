@@ -131,7 +131,7 @@ async function init() {
   /* Default admin */
   const { rows } = await pool.query('SELECT COUNT(*)::int AS cnt FROM users');
   const u = process.env.ADMIN_USER     || 'admin';
-  const p = process.env.ADMIN_PASSWORD || 'ksr keungan';
+  const p = process.env.ADMIN_PASSWORD || 'ksrkeuangan123';
   const h = await bcrypt.hash(p, 10);
   if (rows[0].cnt === 0) {
     await pool.query('INSERT INTO users (username, password_hash) VALUES ($1, $2)', [u, h]);
