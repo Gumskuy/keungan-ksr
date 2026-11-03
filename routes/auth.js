@@ -18,9 +18,10 @@ router.get('/login', (req, res) => {
 });
 
 router.post('/login', loginLimiter, async (req, res) => {
-  const { username, password } = req.body;
+  const username = (req.body.username || '').trim().toLowerCase();
+  const password = (req.body.password || '').trim();
   try {
-    const { rows } = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
+    const { rows } = await pool.query('SELECT * FROM users WHERE LOWER(username) = $1', [username]);
     if (rows.length === 0) {
       return res.render('login', { error: 'Username atau password salah' });
     }
@@ -29,7 +30,10 @@ router.post('/login', loginLimiter, async (req, res) => {
       return res.render('login', { error: 'Username atau password salah' });
     }
     req.session.user = { id: rows[0].id, username: rows[0].username };
-    res.redirect('/');
+    req.session.save((err) => {
+      if (err) console.error('Session save error:', err);
+      res.redirect('/');
+    });
   } catch (err) {
     console.error(err);
     res.render('login', { error: 'Terjadi kesalahan server' });
