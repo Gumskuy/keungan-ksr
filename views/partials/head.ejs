@@ -51,23 +51,23 @@
 </head>
 <body class="bg-surface font-sans text-on-surface min-h-screen">
 
-  <!-- Mobile Top Header -->
-  <header class="md:hidden fixed top-0 left-0 right-0 h-16 bg-primary-container z-50 flex items-center justify-between px-3.5 shadow-sm text-white">
-    <div class="flex items-center gap-2.5">
-      <button onclick="document.getElementById('sidebar').classList.toggle('-translate-x-full'); document.getElementById('sidebar-overlay').classList.toggle('hidden')" class="p-1.5 rounded-lg hover:bg-white/10" aria-label="Menu">
-        <span class="material-symbols-outlined text-[26px]">menu</span>
+  <!-- Mobile Top Header (Clean & Pas di Layar) -->
+  <header class="md:hidden fixed top-0 left-0 right-0 h-14 bg-primary-container z-50 flex items-center justify-between px-3 shadow-sm text-white">
+    <div class="flex items-center gap-2">
+      <button onclick="document.getElementById('sidebar').classList.toggle('-translate-x-full'); document.getElementById('sidebar-overlay').classList.toggle('hidden')" class="p-1.5 rounded-lg hover:bg-white/10 active:bg-white/20" aria-label="Menu">
+        <span class="material-symbols-outlined text-[24px]">menu</span>
       </button>
-      <div class="flex items-center gap-2">
-        <img src="/logo-ksr.png" alt="Logo KSR" class="w-7 h-7 object-contain bg-white rounded-md p-0.5">
-        <span class="font-bold text-xs tracking-wide">KSR ASM Ariyanti</span>
+      <div class="flex items-center gap-1.5">
+        <img src="/logo-ksr.png" alt="Logo KSR" class="w-6 h-6 object-contain bg-white rounded-md p-0.5">
+        <span class="font-bold text-xs tracking-wide truncate max-w-[150px]">KSR ASM Ariyanti</span>
       </div>
     </div>
-    <div>
+    <div class="flex items-center">
       <% if (isAdmin) { %>
-        <span class="text-[11px] text-white bg-white/20 px-2.5 py-1 rounded-full font-semibold">Admin</span>
+        <span class="text-[10px] text-white bg-white/20 px-2 py-0.5 rounded-full font-semibold">Admin</span>
       <% } else { %>
-        <a href="/login" class="text-xs text-secondary bg-white px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 shadow-xs hover:bg-white/90 transition-all">
-          <span class="material-symbols-outlined text-[16px]">login</span> Masuk Admin
+        <a href="/login" class="text-[11px] text-secondary bg-white px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 shadow-xs active:scale-95 transition-all">
+          <span class="material-symbols-outlined text-[14px]">login</span> Masuk
         </a>
       <% } %>
     </div>
@@ -199,4 +199,4 @@
     </header>
 
     <!-- Page Content Container -->
-    <main class="flex-1 p-4 md:p-8 pt-20 md:pt-8 bg-surface">
+    <main class="flex-1 p-3.5 sm:p-6 md:p-8 pt-16 sm:pt-20 md:pt-8 bg-surface">
