@@ -130,12 +130,16 @@ async function init() {
 
   /* Default admin */
   const { rows } = await pool.query('SELECT COUNT(*)::int AS cnt FROM users');
+  const u = process.env.ADMIN_USER     || 'admin';
+  const p = process.env.ADMIN_PASSWORD || 'ksr keungan';
+  const h = await bcrypt.hash(p, 10);
   if (rows[0].cnt === 0) {
-    const u = process.env.ADMIN_USER     || 'admin';
-    const p = process.env.ADMIN_PASSWORD || 'admin123';
-    const h = await bcrypt.hash(p, 10);
     await pool.query('INSERT INTO users (username, password_hash) VALUES ($1, $2)', [u, h]);
     console.log(`Admin user "${u}" created.`);
+  } else {
+    // Update password jika admin sudah ada agar otomatis sinkron dengan password baru
+    await pool.query('UPDATE users SET password_hash = $1 WHERE username = $2', [h, u]);
+    console.log(`Admin user "${u}" password updated.`);
   }
 
   /* Default anggota jika kosong */
