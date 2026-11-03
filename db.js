@@ -1,31 +1,18 @@
 const { Pool } = require('pg');
 
-let pool;
+const defaultDbUrl = 'postgresql://postgres.kzbrzsjvausfraysakas:KsrKeuangan2026!@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres';
+const connString = process.env.DATABASE_URL || defaultDbUrl;
 
-// Jika tidak ada DATABASE_URL atau DATABASE_URL bermasalah, gunakan database internal otomatis
-if (process.env.DATABASE_URL && process.env.DATABASE_URL.startsWith('postgres')) {
-  try {
-    pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: { rejectUnauthorized: false },
-      connectionTimeoutMillis: 5000,
-    });
-    pool.on('error', (err) => {
-      console.warn('DB warning:', err.message);
-    });
-  } catch (e) {
-    console.warn('Gagal konek eksternal, fallback ke database internal');
-  }
-}
+const pool = new Pool({
+  connectionString: connString,
+  ssl: { rejectUnauthorized: false },
+  max: 10,
+  idleTimeoutMillis: 30000,
+});
 
-if (!pool) {
-  // Database internal bawaan (langsung jalan tanpa database luar sama sekali)
-  const { newDb } = require('pg-mem');
-  const db = newDb();
-  const pgMem = db.adapters.createPg();
-  pool = new pgMem.Pool();
-  console.log('⚡ Berjalan dengan database internal bawaan aplikasi!');
-}
+pool.on('error', (err) => {
+  console.error('Database client error:', err.message);
+});
 
 module.exports = pool;
 

@@ -37,9 +37,14 @@ const sessionConfig = {
   secret: process.env.SESSION_SECRET || 'ksr-secret-change-me',
   resave: false,
   saveUninitialized: false,
+  store: new PgSession({ 
+    pool, 
+    tableName: 'session',
+    createTableIfMissing: true 
+  }),
   cookie: {
     maxAge: 24 * 60 * 60 * 1000,
-    secure: false, // Biarkan kompatibel untuk semua environment
+    secure: false,
     httpOnly: true,
     sameSite: 'lax',
   },
