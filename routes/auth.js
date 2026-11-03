@@ -42,7 +42,7 @@ router.post('/login', loginLimiter, async (req, res) => {
 
 router.post('/logout', (req, res) => {
   req.session.destroy(() => {
-    res.redirect('/login');
+    res.redirect('/');   // sebelumnya '/login'
   });
 });
 
