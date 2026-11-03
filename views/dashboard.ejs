@@ -166,18 +166,18 @@
 
   <!-- Table Container (Horizontal Scroll with Sticky Name Column) -->
   <div class="overflow-x-auto rounded-xl border border-surface-container shadow-xs">
-    <table class="w-full text-left border-collapse text-xs" id="paymentTable">
+    <table class="text-left border-collapse text-xs w-auto min-w-full" id="paymentTable">
       <thead>
         <tr class="bg-surface-container-low text-on-surface-variant uppercase text-[11px] font-semibold tracking-wider">
-          <th class="py-3 px-3 sm:px-4 sticky left-0 bg-surface-container-low z-20 border-r border-surface-container min-w-[140px] sm:min-w-[200px] shadow-[2px_0_5px_rgba(0,0,0,0.04)]">
+          <th class="py-3 px-3 sm:px-4 sticky left-0 bg-surface-container-low z-20 border-r border-surface-container w-[160px] min-w-[160px] max-w-[160px] shadow-[2px_0_5px_rgba(0,0,0,0.04)]">
             Nama Anggota
           </th>
           <% weeks.forEach(function(w) { 
             const batchIdx = Math.floor((w.number - 1) / 10);
           %>
-            <th class="py-3.5 px-3 text-center whitespace-nowrap min-w-[96px] border-r border-surface-container/60 week-col week-batch-<%= batchIdx %>">
+            <th class="py-3 px-2 text-center whitespace-nowrap w-[68px] min-w-[68px] max-w-[68px] border-r border-surface-container/60 week-col week-batch-<%= batchIdx %>">
               <div class="font-bold text-primary">M<%= w.number %></div>
-              <div class="text-[10px] text-on-surface-variant font-normal"><%= w.from.getDate() %>/<%= w.from.getMonth()+1 %>-<%= w.to.getDate() %>/<%= w.to.getMonth()+1 %></div>
+              <div class="text-[9px] text-on-surface-variant font-normal leading-tight"><%= w.from.getDate() %>/<%= w.from.getMonth()+1 %></div>
             </th>
           <% }) %>
         </tr>
@@ -189,12 +189,12 @@
         %>
           <tr class="hover:bg-surface-container-low/60 transition-colors" data-nama="<%= a.nama.toLowerCase() %>">
             <!-- Sticky Name Cell (Mobile-Friendly) -->
-            <td class="py-2.5 px-3 sm:px-4 sticky left-0 bg-surface-container-lowest z-10 border-r border-surface-container font-medium text-primary shadow-[2px_0_5px_rgba(0,0,0,0.03)]">
+            <td class="py-2.5 px-3 sm:px-4 sticky left-0 bg-surface-container-lowest z-10 border-r border-surface-container font-medium text-primary shadow-[2px_0_5px_rgba(0,0,0,0.03)] w-[160px] min-w-[160px] max-w-[160px]">
               <div class="flex items-center gap-2">
-                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-secondary-container text-secondary flex items-center justify-center font-bold text-[9px] sm:text-[10px] shrink-0">
+                <div class="w-6 h-6 rounded-full bg-secondary-container text-secondary flex items-center justify-center font-bold text-[9px] shrink-0">
                   <%= initial %>
                 </div>
-                <span class="truncate max-w-[110px] sm:max-w-none text-xs"><%= a.nama %></span>
+                <span class="truncate text-xs font-semibold" title="<%= a.nama %>"><%= a.nama %></span>
               </div>
             </td>
 
@@ -206,8 +206,8 @@
               const bayar = p ? p.apakah_bayar : false;
               const denda = p ? p.kena_denda : false;
             %>
-              <td class="py-2.5 px-2 text-center whitespace-nowrap border-r border-surface-container/40 week-col week-batch-<%= batchIdx %>">
-                <div class="inline-flex items-center gap-1">
+              <td class="py-2 px-1 text-center whitespace-nowrap border-r border-surface-container/40 week-col week-batch-<%= batchIdx %> w-[68px] min-w-[68px]">
+                <div class="inline-flex items-center justify-center gap-1">
                   <!-- Checkbox Bayar (Ceklis ✓) -->
                   <label class="<%= isAdmin ? 'cursor-pointer' : 'cursor-default' %>" title="<%= isAdmin ? (bayar ? 'Klik untuk membatalkan bayar' : 'Klik untuk menandai sudah bayar') : (bayar ? 'Sudah Bayar Kas' : 'Belum Bayar') %>">
                     <input type="checkbox" class="sr-only peer"
@@ -215,8 +215,8 @@
                       <%= bayar ? 'checked' : '' %>
                       <%= !isAdmin ? 'disabled' : '' %>
                       onchange="toggleKas(this, 'apakah_bayar')">
-                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-md border border-surface-container-highest bg-white peer-checked:bg-emerald-600 peer-checked:border-emerald-600 text-transparent peer-checked:text-white transition-all shadow-xs <%= isAdmin ? 'hover:border-emerald-500' : '' %>">
-                      <svg class="w-3.5 h-3.5 fill-none stroke-current stroke-[2.5]" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    <span class="inline-flex items-center justify-center w-5 h-5 rounded border border-surface-container-highest bg-white peer-checked:bg-emerald-600 peer-checked:border-emerald-600 text-transparent peer-checked:text-white transition-all shadow-2xs <%= isAdmin ? 'hover:border-emerald-500' : '' %>">
+                      <svg class="w-3 h-3 fill-none stroke-current stroke-[3]" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                     </span>
                   </label>
 
@@ -227,8 +227,8 @@
                       <%= denda ? 'checked' : '' %>
                       <%= !isAdmin ? 'disabled' : '' %>
                       onchange="toggleKas(this, 'kena_denda')">
-                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-md border border-surface-container-highest bg-white peer-checked:bg-amber-500 peer-checked:border-amber-500 text-transparent peer-checked:text-white transition-all shadow-xs <%= isAdmin ? 'hover:border-amber-400' : '' %>">
-                      <span class="font-bold text-[11px] leading-none">!</span>
+                    <span class="inline-flex items-center justify-center w-5 h-5 rounded border border-surface-container-highest bg-white peer-checked:bg-amber-500 peer-checked:border-amber-500 text-transparent peer-checked:text-white transition-all shadow-2xs <%= isAdmin ? 'hover:border-amber-400' : '' %>">
+                      <span class="font-bold text-[10px] leading-none">!</span>
                     </span>
                   </label>
                 </div>
@@ -262,7 +262,11 @@ function setBatch(batchIndex) {
 
   // Toggle column visibility
   document.querySelectorAll('.week-col').forEach(el => {
-    el.style.display = el.classList.contains('week-batch-' + currentBatch) ? '' : 'none';
+    if (el.classList.contains('week-batch-' + currentBatch)) {
+      el.style.removeProperty('display');
+    } else {
+      el.style.setProperty('display', 'none', 'important');
+    }
   });
 
   // Update batch pills
