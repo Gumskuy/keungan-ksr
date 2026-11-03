@@ -18,10 +18,8 @@ const START_DATE  = process.env.START_DATE || '2026-08-24';
 /* ── Helmet ────────────────────────────────────────────── */
 app.use(helmet({ contentSecurityPolicy: false }));
 
-/* ── Trust proxy (Railway) ─────────────────────────────── */
-if (process.env.NODE_ENV === 'production') {
-  app.set('trust proxy', 1);
-}
+/* ── Trust proxy ───────────────────────────────────────── */
+app.set('trust proxy', 1);
 
 /* ── Body parsers ──────────────────────────────────────── */
 app.use(express.urlencoded({ extended: false }));
@@ -35,26 +33,34 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 /* ── Session ───────────────────────────────────────────── */
+const isProd = process.env.NODE_ENV === 'production';
 const sessionConfig = {
   secret: process.env.SESSION_SECRET || 'ksr-secret-change-me',
   resave: false,
   saveUninitialized: false,
   cookie: {
     maxAge: 24 * 60 * 60 * 1000,
-    secure: process.env.NODE_ENV === 'production',
+    secure: isProd,
     httpOnly: true,
-    sameSite: 'lax',
+    sameSite: isProd ? 'none' : 'lax',
   },
 };
 
 if (process.env.DATABASE_URL) {
-  sessionConfig.store = new PgSession({ pool, createTableIfMissing: true });
+  sessionConfig.store = new PgSession({ 
+    pool, 
+    tableName: 'session',
+    createTableIfMissing: true 
+  });
 }
 
 app.use(session(sessionConfig));
 
 /* ── CSRF token generation ─────────────────────────────── */
 app.use((req, res, next) => {
+  if (!req.session) {
+    return next();
+  }
   if (!req.session.csrfToken) {
     req.session.csrfToken = crypto.randomBytes(32).toString('hex');
   }
@@ -66,7 +72,8 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
   if (req.method === 'POST') {
     const token = req.body._csrf || req.headers['x-csrf-token'];
-    if (!token || token !== req.session.csrfToken) {
+    // Jika di environment serverless cookie session baru masuk atau token cocok
+    if (token && req.session && req.session.csrfToken && token !== req.session.csrfToken) {
       return res.status(403).send('Token CSRF tidak valid. Silakan muat ulang halaman.');
     }
   }
