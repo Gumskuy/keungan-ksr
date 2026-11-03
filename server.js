@@ -155,13 +155,19 @@ async function init() {
   }
 
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server berjalan di http://localhost:${PORT}`);
-    startWeeklyBackupSchedule();
-  });
+  if (process.env.VERCEL !== '1') {
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`Server berjalan di http://localhost:${PORT}`);
+      startWeeklyBackupSchedule();
+    });
+  }
 }
 
 init().catch((err) => {
   console.error('Gagal start:', err);
-  process.exit(1);
+  if (process.env.VERCEL !== '1') {
+    process.exit(1);
+  }
 });
+
+module.exports = app;
